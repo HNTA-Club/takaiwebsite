@@ -1,5 +1,5 @@
 ---
-import '../styles/global.css';
+import "./global.css";
 ---
 
 <!doctype html>
@@ -13,15 +13,8 @@ import '../styles/global.css';
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<slot />
+		<div class="max-w-3xl p-5 mx-auto">
+			<slot />
+		</div>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
