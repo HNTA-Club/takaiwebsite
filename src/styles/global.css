@@ -1,19 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-pink: #db2777;
-  --color-brand-pink-hover: #be185d;
-  --color-brand-pink-dark: #f472b6;
+  /* Light Theme Base Palette */
+  --color-site-bg: #fdfbf7;              /* Soft warm cream background */
+  --color-site-card-bg: #ffffff;         /* Clean card background */
+  --color-site-toolbar-bg: #f5f2eb;      /* Soft toolbar background */
+  --color-site-border: #e8e2d5;          /* Warm subtle border */
+  --color-site-border-subtle: #f0eae1;   /* Ultra-subtle divider */
+  --color-site-text: #2d2623;            /* Rich warm charcoal text */
+  --color-site-text-muted: #786f68;      /* Soft taupe muted text */
+  --color-site-hover: #f7f3ec;           /* Soft hover highlight */
 
-  --color-brand-purple: #7c3aed;
+  /* Brand Accent Colors */
+  --color-brand-pink: #d946ef;           /* Fuchsia pink accent */
+  --color-brand-pink-hover: #c026d3;     /* Hover fuchsia */
+  --color-brand-pink-subtle: #fdf4ff;    /* Subtle pink tint */
+
+  /* Anime Badge Tag Colors */
   --color-brand-purple-bg: #f3e8ff;
   --color-brand-purple-text: #6b21a8;
-  --color-brand-purple-dark-bg: #3b0764;
-  --color-brand-purple-dark-text: #d8b4fe;
-  --color-brand-purple-dark-border: #6b21a8;
+  --color-brand-purple-border: #ddd6fe;
 
+  /* Search Highlight Tokens */
   --color-search-highlight-bg: #fef08a;
   --color-search-highlight-text: #713f12;
-  --color-search-highlight-dark-bg: #831843;
-  --color-search-highlight-dark-text: #fce7f3;
+}
+
+body {
+  background-color: var(--color-site-bg);
+  color: var(--color-site-text);
 }

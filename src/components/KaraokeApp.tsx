@@ -95,22 +95,22 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onSortOptionChange,
 }) => {
   return (
-    <div className="mb-4 flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+    <div className="mb-4 flex flex-col gap-3 rounded-xl border border-site-border bg-site-toolbar-bg p-4 shadow-xs">
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         {/* Search input field */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-site-text-muted" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by artist, song, or anime..."
-            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-9 pr-8 text-sm outline-none focus:border-brand-pink dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="w-full rounded-lg border border-site-border bg-site-card-bg py-2 pl-9 pr-8 text-sm text-site-text outline-none focus:border-brand-pink focus:ring-1 focus:ring-brand-pink"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-site-text-muted hover:text-site-text transition-colors"
               title="Clear search"
             >
               <X className="h-3.5 w-3.5" />
@@ -120,17 +120,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Sort Option Selector */}
         <div className="flex items-center gap-1.5 text-xs">
-          <span className="font-medium text-gray-500 dark:text-slate-400">
+          <span className="font-medium text-site-text-muted">
             Sort by:
           </span>
           {(["anime", "song", "artist"] as SortOption[]).map((option) => (
             <button
               key={option}
               onClick={() => onSortOptionChange(option)}
-              className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
                 sortOption === option
-                  ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-sm dark:border-brand-pink dark:bg-brand-pink"
-                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
+                  : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
               }`}
             >
               {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
@@ -173,7 +173,7 @@ const SongTable: React.FC<SongTableProps> = ({
       regex.test(part) ? (
         <mark
           key={i}
-          className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text dark:bg-search-highlight-dark-bg dark:text-search-highlight-dark-text"
+          className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text"
         >
           {part}
         </mark>
@@ -186,55 +186,55 @@ const SongTable: React.FC<SongTableProps> = ({
   return (
     <div>
       {/* Desktop & Tablet Table View (hidden on mobile < 640px) */}
-      <div className="hidden w-full overflow-x-auto rounded-lg border border-gray-200 shadow-sm dark:border-slate-800 sm:block">
+      <div className="hidden w-full overflow-x-auto rounded-xl border border-site-border bg-site-card-bg shadow-xs sm:block">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+          <thead className="border-b border-site-border bg-site-toolbar-bg text-xs uppercase tracking-wider text-site-text-muted">
             <tr>
               <th
                 scope="col"
                 onClick={() => onSortOptionChange("artist")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
               >
                 <div className="flex items-center gap-1">
                   <span>Artist</span>
-                  {sortOption === "artist" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
+                  {sortOption === "artist" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
                 </div>
               </th>
               <th
                 scope="col"
                 onClick={() => onSortOptionChange("song")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
               >
                 <div className="flex items-center gap-1">
                   <span>Song Title</span>
-                  {sortOption === "song" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
+                  {sortOption === "song" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
                 </div>
               </th>
               <th
                 scope="col"
                 onClick={() => onSortOptionChange("anime")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
               >
                 <div className="flex items-center gap-1">
                   <span>Anime / Source</span>
-                  {sortOption === "anime" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
+                  {sortOption === "anime" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
                 </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white dark:divide-slate-800/60 dark:bg-slate-950">
+          <tbody className="divide-y divide-site-border-subtle bg-site-card-bg">
             {songs.map((song) => (
               <tr
                 key={song.id}
-                className="transition-colors hover:bg-gray-50 dark:hover:bg-slate-900/60"
+                className="transition-colors hover:bg-site-hover"
               >
-                <td className="px-4 py-2.5 font-medium text-gray-900 dark:text-slate-200">
+                <td className="px-4 py-2.5 font-medium text-site-text">
                   {highlightMatch(song.artist)}
                 </td>
-                <td className="px-4 py-2.5 font-semibold text-brand-pink dark:text-brand-pink-dark">
+                <td className="px-4 py-2.5 font-semibold text-brand-pink">
                   {highlightMatch(song.song)}
                 </td>
-                <td className="px-4 py-2.5 text-gray-600 dark:text-slate-400">
+                <td className="px-4 py-2.5 text-site-text-muted">
                   {highlightMatch(song.anime || "—")}
                 </td>
               </tr>
@@ -248,17 +248,17 @@ const SongTable: React.FC<SongTableProps> = ({
         {songs.map((song) => (
           <div
             key={song.id}
-            className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-colors hover:bg-gray-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800/80"
+            className="rounded-xl border border-site-border bg-site-card-bg p-3.5 shadow-xs transition-colors hover:bg-site-hover"
           >
             <div className="mb-1">
-              <span className="inline-block rounded border border-brand-purple-bg bg-brand-purple-bg px-1.5 py-0.5 text-[11px] font-semibold text-brand-purple-text dark:border-brand-purple-dark-border dark:bg-brand-purple-dark-bg dark:text-brand-purple-dark-text">
+              <span className="inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
                 {highlightMatch(song.anime || "Original / Special")}
               </span>
             </div>
-            <h4 className="text-sm font-bold text-brand-pink dark:text-brand-pink-dark">
+            <h4 className="text-sm font-bold text-brand-pink">
               {highlightMatch(song.song)}
             </h4>
-            <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">
+            <p className="mt-0.5 text-xs text-site-text-muted">
               {highlightMatch(song.artist)}
             </p>
           </div>
@@ -339,7 +339,7 @@ export const KaraokeApp: React.FC = () => {
 
   return (
     <div className="w-full font-sans">
-      <div className="mb-3 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
+      <div className="mb-3 flex items-center justify-between text-xs text-site-text-muted">
         <span>
           Showing <strong>{filteredSongs.length}</strong> of <strong>{allSongs.length}</strong> songs
         </span>
@@ -354,20 +354,20 @@ export const KaraokeApp: React.FC = () => {
 
       <main className="w-full">
         {loading ? (
-          <div className="py-16 text-center text-gray-500 dark:text-slate-400">
+          <div className="py-16 text-center text-site-text-muted">
             <p className="text-sm font-semibold">Loading song database...</p>
           </div>
         ) : error ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
             <p>{error}</p>
           </div>
         ) : filteredSongs.length === 0 ? (
-          <div className="py-16 text-center text-gray-500 dark:text-slate-400">
+          <div className="py-16 text-center text-site-text-muted">
             <p className="text-sm font-semibold">No matching songs found</p>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="mt-2 text-xs font-semibold text-brand-pink underline dark:text-brand-pink-dark"
+                className="mt-2 text-xs font-semibold text-brand-pink underline"
               >
                 Reset Search
               </button>
