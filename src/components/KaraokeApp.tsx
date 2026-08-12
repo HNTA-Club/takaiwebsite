@@ -134,7 +134,15 @@ const SongTable: React.FC<SongTableProps> = ({
 }) => {
   const highlightMatch = (text: string) => {
     if (!searchQuery.trim() || !text) return text || "";
-    const regex = new RegExp(`(${searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+    const rawTokens = searchQuery
+      .trim()
+      .split(/\s+/)
+      .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      .filter(Boolean);
+
+    if (rawTokens.length === 0) return text;
+
+    const regex = new RegExp(`(${rawTokens.join("|")})`, "gi");
     const parts = text.split(regex);
 
     return parts.map((part, i) =>
@@ -216,13 +224,20 @@ export const KaraokeApp: React.FC = () => {
   const filteredSongs = useMemo(() => {
     let list = allSongs;
 
-    const queryFold = foldText(searchQuery);
-    if (queryFold) {
-      list = list.filter(
-        (s) =>
-          s.songFold.includes(queryFold) ||
-          s.animeFold.includes(queryFold) ||
-          s.artistFold.includes(queryFold)
+    const tokens = searchQuery
+      .trim()
+      .split(/\s+/)
+      .map((t) => foldText(t))
+      .filter(Boolean);
+
+    if (tokens.length > 0) {
+      list = list.filter((s) =>
+        tokens.every(
+          (token) =>
+            s.songFold.includes(token) ||
+            s.animeFold.includes(token) ||
+            s.artistFold.includes(token)
+        )
       );
     }
 
