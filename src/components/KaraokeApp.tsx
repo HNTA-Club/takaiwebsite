@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useDeferredValue } from "react";
 import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
 
 /* ==========================================================================
@@ -325,6 +325,7 @@ export const KaraokeApp: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
@@ -359,7 +360,7 @@ export const KaraokeApp: React.FC = () => {
   const filteredSongs = useMemo(() => {
     let list = allSongs;
 
-    const tokens = searchQuery
+    const tokens = deferredSearchQuery
       .trim()
       .split(/\s+/)
       .map((t) => foldText(t))
@@ -395,7 +396,7 @@ export const KaraokeApp: React.FC = () => {
     });
 
     return sorted;
-  }, [allSongs, searchQuery, sortOption, sortOrder]);
+  }, [allSongs, deferredSearchQuery, sortOption, sortOrder]);
 
   return (
     <div className="w-full font-sans">
@@ -436,7 +437,7 @@ export const KaraokeApp: React.FC = () => {
             sortOption={sortOption}
             sortOrder={sortOrder}
             onSelectSort={handleSelectSort}
-            searchQuery={searchQuery}
+            searchQuery={deferredSearchQuery}
           />
         )}
       </main>
