@@ -196,7 +196,6 @@ interface SearchBarProps {
   hasMALFilter: boolean;
   onClearMALFilter: () => void;
   onOpenMALModal: () => void;
-  onOpenRandomModal: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -211,7 +210,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   hasMALFilter,
   onClearMALFilter,
   onOpenMALModal,
-  onOpenRandomModal,
 }) => {
   return (
     <div className="karaoke-toolbar">
@@ -235,10 +233,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </div>
 
         <div className="karaoke-toolbar-actions">
-          <button onClick={onOpenRandomModal} className="karaoke-btn karaoke-btn-random">
-            <span>🎲</span>
-            <span>Random</span>
-          </button>
           <button onClick={onOpenMALModal} className="karaoke-btn karaoke-btn-mal">
             <span>📂</span>
             <span>Import MAL</span>
@@ -526,86 +520,7 @@ const MALImporter: React.FC<MALImporterProps> = ({
   );
 };
 
-/* Random Picker Modal */
-interface RandomPickerModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  songs: KaraokeSong[];
-}
 
-const RandomPickerModal: React.FC<RandomPickerModalProps> = ({ isOpen, onClose, songs }) => {
-  const [selectedSong, setSelectedSong] = useState<KaraokeSong | null>(null);
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const pickRandom = () => {
-    if (songs.length === 0) return;
-    setIsSpinning(true);
-
-    let count = 0;
-    const interval = setInterval(() => {
-      const idx = Math.floor(Math.random() * songs.length);
-      setSelectedSong(songs[idx]);
-      count++;
-      if (count >= 15) {
-        clearInterval(interval);
-        setIsSpinning(false);
-      }
-    }, 80);
-  };
-
-  useEffect(() => {
-    if (isOpen && songs.length > 0) {
-      pickRandom();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="karaoke-modal-backdrop">
-      <div className="karaoke-modal-content max-w-md">
-        <button onClick={onClose} className="karaoke-modal-close">
-          ✕
-        </button>
-        <div className="text-center">
-          <div className="inline-block text-3xl">🎲</div>
-          <h2 className="mt-1 text-lg font-extrabold">Random Song Picker</h2>
-          <p className="text-xs text-gray-500 dark:text-slate-400">
-            Picking from {songs.length} currently visible songs
-          </p>
-        </div>
-
-        <div className="karaoke-dropzone mt-4 min-h-[120px] p-4 text-center">
-          {selectedSong ? (
-            <div className={isSpinning ? "opacity-75" : "opacity-100"}>
-              <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                {selectedSong.anime || "Anime / Special"}
-              </span>
-              <h3 className="mt-1 text-base font-bold text-pink-600 dark:text-pink-400">
-                {selectedSong.song}
-              </h3>
-              <p className="text-xs font-medium text-gray-600 dark:text-slate-300">
-                {selectedSong.artist}
-              </p>
-            </div>
-          ) : (
-            <p className="text-xs text-gray-500">No songs available to pick from</p>
-          )}
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={pickRandom}
-            disabled={isSpinning || songs.length === 0}
-            className="karaoke-btn karaoke-btn-active flex-1 justify-center py-2"
-          >
-            {isSpinning ? "Spinning..." : "🎲 Spin Again"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 /* ==========================================================================
    MAIN EXPORT COMPONENT
@@ -627,7 +542,6 @@ export const KaraokeApp: React.FC = () => {
   const [malResult, setMalResult] = useState<MALParseResult | null>(null);
 
   const [isMALModalOpen, setIsMALModalOpen] = useState(false);
-  const [isRandomModalOpen, setIsRandomModalOpen] = useState(false);
 
   useEffect(() => {
     setFavorites(loadStorageSet(FAVS_STORAGE_KEY));
@@ -733,7 +647,6 @@ export const KaraokeApp: React.FC = () => {
         hasMALFilter={malResult !== null}
         onClearMALFilter={() => setMalResult(null)}
         onOpenMALModal={() => setIsMALModalOpen(true)}
-        onOpenRandomModal={() => setIsRandomModalOpen(true)}
       />
 
       <main className="w-full">
@@ -786,12 +699,6 @@ export const KaraokeApp: React.FC = () => {
         }}
         onResetMALFilter={() => setMalResult(null)}
         hasMALFilter={malResult !== null}
-      />
-
-      <RandomPickerModal
-        isOpen={isRandomModalOpen}
-        onClose={() => setIsRandomModalOpen(false)}
-        songs={filteredSongs}
       />
     </div>
   );
