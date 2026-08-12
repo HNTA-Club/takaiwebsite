@@ -89,11 +89,15 @@ export async function fetchHNTAKaraokeSongs(
 interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  sortOption: SortOption;
+  onSortOptionChange: (sort: SortOption) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   onSearchChange,
+  sortOption,
+  onSortOptionChange,
 }) => {
   return (
     <div className="karaoke-toolbar">
@@ -112,6 +116,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ✕
             </button>
           )}
+        </div>
+
+        {/* Sort selector bar */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="font-medium text-gray-500 dark:text-slate-400">Sort by:</span>
+          {(["anime", "song", "artist"] as SortOption[]).map((option) => (
+            <button
+              key={option}
+              onClick={() => onSortOptionChange(option)}
+              className={`karaoke-btn ${sortOption === option ? "karaoke-btn-active" : ""}`}
+            >
+              {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -157,40 +175,58 @@ const SongTable: React.FC<SongTableProps> = ({
   };
 
   return (
-    <div className="karaoke-table-wrapper">
-      <table className="karaoke-table">
-        <thead>
-          <tr>
-            <th scope="col" onClick={() => onSortOptionChange("artist")}>
-              <div className="flex items-center gap-1">
-                <span>Artist</span>
-                {sortOption === "artist" && <span>↓</span>}
-              </div>
-            </th>
-            <th scope="col" onClick={() => onSortOptionChange("song")}>
-              <div className="flex items-center gap-1">
-                <span>Song Title</span>
-                {sortOption === "song" && <span>↓</span>}
-              </div>
-            </th>
-            <th scope="col" onClick={() => onSortOptionChange("anime")}>
-              <div className="flex items-center gap-1">
-                <span>Anime / Source</span>
-                {sortOption === "anime" && <span>↓</span>}
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {songs.map((song) => (
-            <tr key={song.id} className="karaoke-row">
-              <td className="karaoke-cell-artist">{highlightMatch(song.artist)}</td>
-              <td className="karaoke-cell-song">{highlightMatch(song.song)}</td>
-              <td className="karaoke-cell-anime">{highlightMatch(song.anime || "—")}</td>
+    <div>
+      {/* Desktop & Tablet Table View (hidden on mobile < 640px) */}
+      <div className="hidden sm:block karaoke-table-wrapper">
+        <table className="karaoke-table">
+          <thead>
+            <tr>
+              <th scope="col" onClick={() => onSortOptionChange("artist")}>
+                <div className="flex items-center gap-1">
+                  <span>Artist</span>
+                  {sortOption === "artist" && <span>↓</span>}
+                </div>
+              </th>
+              <th scope="col" onClick={() => onSortOptionChange("song")}>
+                <div className="flex items-center gap-1">
+                  <span>Song Title</span>
+                  {sortOption === "song" && <span>↓</span>}
+                </div>
+              </th>
+              <th scope="col" onClick={() => onSortOptionChange("anime")}>
+                <div className="flex items-center gap-1">
+                  <span>Anime / Source</span>
+                  {sortOption === "anime" && <span>↓</span>}
+                </div>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {songs.map((song) => (
+              <tr key={song.id} className="karaoke-row">
+                <td className="karaoke-cell-artist">{highlightMatch(song.artist)}</td>
+                <td className="karaoke-cell-song">{highlightMatch(song.song)}</td>
+                <td className="karaoke-cell-anime">{highlightMatch(song.anime || "—")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Stacked Card View (visible only on mobile < 640px) */}
+      <div className="block sm:hidden space-y-2.5">
+        {songs.map((song) => (
+          <div key={song.id} className="karaoke-mobile-card">
+            <div className="karaoke-mobile-card-header">
+              <span className="karaoke-mobile-anime-tag">
+                {highlightMatch(song.anime || "Original / Special")}
+              </span>
+            </div>
+            <h4 className="karaoke-mobile-song-title">{highlightMatch(song.song)}</h4>
+            <p className="karaoke-mobile-artist">{highlightMatch(song.artist)}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -271,6 +307,8 @@ export const KaraokeApp: React.FC = () => {
       <SearchBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        sortOption={sortOption}
+        onSortOptionChange={setSortOption}
       />
 
       <main className="w-full">

@@ -317,3 +317,44 @@
   padding: 0 0.125rem;
   border-radius: 0.125rem;
 }
+
+/* Mobile Card Layout (< 640px) */
+.karaoke-mobile-card {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--karaoke-border);
+  background-color: var(--karaoke-bg-card);
+  transition: background-color 0.15s ease;
+}
+
+.karaoke-mobile-card:hover {
+  background-color: var(--karaoke-bg-hover);
+}
+
+.karaoke-mobile-card-header {
+  margin-bottom: 0.375rem;
+}
+
+.karaoke-mobile-anime-tag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--karaoke-border);
+  background-color: var(--karaoke-bg-subtle);
+  color: var(--karaoke-purple-text);
+}
+
+.karaoke-mobile-song-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--karaoke-accent);
+}
+
+.karaoke-mobile-artist {
+  font-size: 0.75rem;
+  color: var(--karaoke-text-muted);
+  margin-top: 0.125rem;
+}
+
