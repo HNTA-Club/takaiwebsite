@@ -337,9 +337,10 @@ export const KaraokeApp: React.FC = () => {
         const songs = await fetchHNTAKaraokeSongs();
         setAllSongs(songs);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        setError("Failed to load karaoke database from Google Sheets.");
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(`Failed to load karaoke database from Google Sheets: ${errorMessage}`);
       } finally {
         setLoading(false);
       }
