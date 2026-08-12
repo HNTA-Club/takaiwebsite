@@ -19,11 +19,6 @@ export interface KaraokeSong {
 export type SearchField = "all" | "song" | "anime" | "artist";
 export type SortOption = "anime" | "song" | "artist";
 
-export interface MALParseResult {
-  animeTitles: string[];
-  matchedSongs: KaraokeSong[];
-}
-
 export const HNTA_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
 
@@ -84,80 +79,7 @@ export async function fetchHNTAKaraokeSongs(
   return parseTSVData(text);
 }
 
-export async function decompressGzip(file: File): Promise<string> {
-  if (typeof DecompressionStream === "undefined") {
-    throw new Error("DecompressionStream is not supported in this browser.");
-  }
-  const ds = new DecompressionStream("gzip");
-  const decompressedStream = file.stream().pipeThrough(ds);
-  const response = new Response(decompressedStream);
-  return await response.text();
-}
 
-export function parseMALXml(xmlText: string): string[] {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-  const animeElements = xmlDoc.getElementsByTagName("anime");
-  const titles: string[] = [];
-
-  for (let i = 0; i < animeElements.length; i++) {
-    const animeNode = animeElements[i];
-    const statusNode = animeNode.getElementsByTagName("my_status")[0];
-    const titleNode = animeNode.getElementsByTagName("series_title")[0];
-
-    if (titleNode && titleNode.textContent) {
-      const status = statusNode?.textContent?.trim() || "";
-      if (status === "Completed" || status === "Watching" || status === "1" || status === "2") {
-        titles.push(titleNode.textContent.trim());
-      }
-    }
-  }
-
-  return titles;
-}
-
-export function filterSongsByMAL(
-  allSongs: KaraokeSong[],
-  malTitles: string[]
-): KaraokeSong[] {
-  const malTokens = new Set(malTitles.map((t) => foldText(t)));
-
-  return allSongs.filter((song) => {
-    if (!song.animeFold) return false;
-    for (const malToken of malTokens) {
-      if (
-        malToken &&
-        (song.animeFold.includes(malToken) || malToken.includes(song.animeFold))
-      ) {
-        return true;
-      }
-    }
-    return false;
-  });
-}
-
-export async function processMALFile(
-  file: File,
-  allSongs: KaraokeSong[]
-): Promise<MALParseResult> {
-  let xmlText = "";
-  if (file.name.endsWith(".gz") || file.type.includes("gzip")) {
-    xmlText = await decompressGzip(file);
-  } else {
-    xmlText = await file.text();
-  }
-
-  const animeTitles = parseMALXml(xmlText);
-  if (animeTitles.length === 0) {
-    throw new Error(
-      "No valid anime titles found in the uploaded MAL file."
-    );
-  }
-
-  const matchedSongs = filterSongsByMAL(allSongs, animeTitles);
-
-  return { animeTitles, matchedSongs };
-}
 
 /* LocalStorage Helpers */
 function loadStorageSet(key: string): Set<string> {
@@ -193,9 +115,6 @@ interface SearchBarProps {
   onToggleFavsOnly: () => void;
   sungFilter: "all" | "unsung" | "sung";
   onSungFilterChange: (filter: "all" | "unsung" | "sung") => void;
-  hasMALFilter: boolean;
-  onClearMALFilter: () => void;
-  onOpenMALModal: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -207,9 +126,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onToggleFavsOnly,
   sungFilter,
   onSungFilterChange,
-  hasMALFilter,
-  onClearMALFilter,
-  onOpenMALModal,
 }) => {
   return (
     <div className="karaoke-toolbar">
@@ -230,13 +146,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ✕
             </button>
           )}
-        </div>
-
-        <div className="karaoke-toolbar-actions">
-          <button onClick={onOpenMALModal} className="karaoke-btn karaoke-btn-mal">
-            <span>📂</span>
-            <span>Import MAL</span>
-          </button>
         </div>
       </div>
 
@@ -278,13 +187,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ? "⌛ Hide Sung"
               : "✓ All Status"}
           </button>
-
-          {hasMALFilter && (
-            <button onClick={onClearMALFilter} className="karaoke-btn karaoke-btn-random font-semibold">
-              <span>MAL Active</span>
-              <span>✕</span>
-            </button>
-          )}
         </div>
       </div>
     </div>
@@ -394,138 +296,6 @@ const SongTable: React.FC<SongTableProps> = ({
   );
 };
 
-/* MAL Importer Modal */
-interface MALImporterProps {
-  isOpen: boolean;
-  onClose: () => void;
-  allSongs: KaraokeSong[];
-  onMALImportSuccess: (result: MALParseResult) => void;
-  onResetMALFilter: () => void;
-  hasMALFilter: boolean;
-}
-
-const MALImporter: React.FC<MALImporterProps> = ({
-  isOpen,
-  onClose,
-  allSongs,
-  onMALImportSuccess,
-  onResetMALFilter,
-  hasMALFilter,
-}) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastResult, setLastResult] = useState<MALParseResult | null>(null);
-
-  if (!isOpen) return null;
-
-  const handleFileUpload = async (file: File) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await processMALFile(file, allSongs);
-      setLastResult(result);
-      onMALImportSuccess(result);
-    } catch (err: any) {
-      setError(err.message || "Failed to process MAL export file.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="karaoke-modal-backdrop">
-      <div className="karaoke-modal-content">
-        <button onClick={onClose} className="karaoke-modal-close">
-          ✕
-        </button>
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">📂</span>
-          <div>
-            <h2 className="text-lg font-bold">Import MyAnimeList Export</h2>
-            <p className="text-xs text-gray-500 dark:text-slate-400">
-              Load your MAL `.xml` or `.xml.gz` file to highlight songs from anime you watched!
-            </p>
-          </div>
-        </div>
-
-        <div
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files?.[0];
-            if (file) handleFileUpload(file);
-          }}
-          className="karaoke-dropzone"
-        >
-          {loading ? (
-            <p className="text-xs font-semibold text-pink-500">Decompressing & matching anime list...</p>
-          ) : (
-            <>
-              <span className="text-3xl">📥</span>
-              <p className="mt-2 text-sm font-semibold">Drag & drop your MAL file here</p>
-              <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">Supports .xml and .xml.gz files</p>
-              <label className="karaoke-btn karaoke-btn-active mt-3 cursor-pointer">
-                Browse File
-                <input
-                  type="file"
-                  accept=".xml,.gz,.xml.gz"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleFileUpload(file);
-                  }}
-                  className="hidden"
-                />
-              </label>
-            </>
-          )}
-        </div>
-
-        {error && (
-          <div className="mt-4 rounded-md bg-red-50 p-3 text-xs text-red-600 dark:bg-red-950/50 dark:text-red-300">
-            {error}
-          </div>
-        )}
-
-        {lastResult && !error && (
-          <div className="mt-4 rounded-md bg-emerald-50 p-3 text-xs text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-            <div className="flex items-center justify-between font-bold">
-              <span>Import Successful! 🎉</span>
-              <span>{lastResult.matchedSongs.length} songs matched</span>
-            </div>
-            <p className="mt-1">Found {lastResult.animeTitles.length} anime entries in your list.</p>
-          </div>
-        )}
-
-        <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-slate-800">
-          {hasMALFilter ? (
-            <button onClick={onResetMALFilter} className="karaoke-btn text-red-600">
-              Clear MAL Filter
-            </button>
-          ) : (
-            <a
-              href="https://myanimelist.net/panel.php?go=export"
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs text-pink-600 hover:underline dark:text-pink-400"
-            >
-              How to export MAL list? ↗
-            </a>
-          )}
-          <button onClick={onClose} className="karaoke-btn">
-            Done
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-
-/* ==========================================================================
-   MAIN EXPORT COMPONENT
-   ========================================================================== */
-
 export const KaraokeApp: React.FC = () => {
   const [allSongs, setAllSongs] = useState<KaraokeSong[]>([]);
   const [loading, setLoading] = useState(true);
@@ -539,9 +309,6 @@ export const KaraokeApp: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [showFavsOnly, setShowFavsOnly] = useState(false);
   const [sungFilter, setSungFilter] = useState<"all" | "unsung" | "sung">("all");
-  const [malResult, setMalResult] = useState<MALParseResult | null>(null);
-
-  const [isMALModalOpen, setIsMALModalOpen] = useState(false);
 
   useEffect(() => {
     setFavorites(loadStorageSet(FAVS_STORAGE_KEY));
@@ -581,7 +348,7 @@ export const KaraokeApp: React.FC = () => {
   };
 
   const filteredSongs = useMemo(() => {
-    let list = malResult ? malResult.matchedSongs : allSongs;
+    let list = allSongs;
 
     const queryFold = foldText(searchQuery);
     if (queryFold) {
@@ -624,14 +391,13 @@ export const KaraokeApp: React.FC = () => {
     });
 
     return sorted;
-  }, [allSongs, malResult, searchQuery, searchField, showFavsOnly, sungFilter, sortOption, favorites, sung]);
+  }, [allSongs, searchQuery, searchField, showFavsOnly, sungFilter, sortOption, favorites, sung]);
 
   return (
     <div className="w-full font-sans">
       <div className="karaoke-stats-bar">
         <span>
           Showing <strong>{filteredSongs.length}</strong> of <strong>{allSongs.length}</strong> songs
-          {malResult && ` (Filtered by MAL: ${malResult.matchedSongs.length} matched)`}
         </span>
       </div>
 
@@ -644,9 +410,6 @@ export const KaraokeApp: React.FC = () => {
         onToggleFavsOnly={() => setShowFavsOnly(!showFavsOnly)}
         sungFilter={sungFilter}
         onSungFilterChange={setSungFilter}
-        hasMALFilter={malResult !== null}
-        onClearMALFilter={() => setMalResult(null)}
-        onOpenMALModal={() => setIsMALModalOpen(true)}
       />
 
       <main className="w-full">
@@ -661,13 +424,12 @@ export const KaraokeApp: React.FC = () => {
         ) : filteredSongs.length === 0 ? (
           <div className="py-16 text-center text-gray-500 dark:text-slate-400">
             <p className="text-sm font-semibold">No matching songs found</p>
-            {(searchQuery || showFavsOnly || sungFilter !== "all" || malResult) && (
+            {(searchQuery || showFavsOnly || sungFilter !== "all") && (
               <button
                 onClick={() => {
                   setSearchQuery("");
                   setShowFavsOnly(false);
                   setSungFilter("all");
-                  setMalResult(null);
                 }}
                 className="mt-2 text-xs font-semibold text-pink-600 underline"
               >
@@ -688,18 +450,6 @@ export const KaraokeApp: React.FC = () => {
           />
         )}
       </main>
-
-      <MALImporter
-        isOpen={isMALModalOpen}
-        onClose={() => setIsMALModalOpen(false)}
-        allSongs={allSongs}
-        onMALImportSuccess={(result) => {
-          setMalResult(result);
-          setIsMALModalOpen(false);
-        }}
-        onResetMALFilter={() => setMalResult(null)}
-        hasMALFilter={malResult !== null}
-      />
     </div>
   );
 };
