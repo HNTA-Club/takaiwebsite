@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { Search, X, ChevronDown } from "lucide-react";
 
 /* ==========================================================================
    TYPES & CONSTANTS
@@ -98,9 +99,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         {/* Search input field */}
         <div className="relative flex-1">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            🔍
-          </span>
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={searchQuery}
@@ -111,9 +110,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {searchQuery && (
             <button
               onClick={() => onSearchChange("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 hover:text-gray-600 dark:hover:text-slate-200"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200"
+              title="Clear search"
             >
-              ✕
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
@@ -197,7 +197,7 @@ const SongTable: React.FC<SongTableProps> = ({
               >
                 <div className="flex items-center gap-1">
                   <span>Artist</span>
-                  {sortOption === "artist" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
+                  {sortOption === "artist" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
                 </div>
               </th>
               <th
@@ -207,7 +207,7 @@ const SongTable: React.FC<SongTableProps> = ({
               >
                 <div className="flex items-center gap-1">
                   <span>Song Title</span>
-                  {sortOption === "song" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
+                  {sortOption === "song" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
                 </div>
               </th>
               <th
@@ -217,7 +217,7 @@ const SongTable: React.FC<SongTableProps> = ({
               >
                 <div className="flex items-center gap-1">
                   <span>Anime / Source</span>
-                  {sortOption === "anime" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
+                  {sortOption === "anime" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink dark:text-brand-pink-dark" />}
                 </div>
               </th>
             </tr>
