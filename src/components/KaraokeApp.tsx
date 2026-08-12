@@ -16,7 +16,6 @@ export interface KaraokeSong {
   animeFold: string;
 }
 
-export type SearchField = "all" | "song" | "anime" | "artist";
 export type SortOption = "anime" | "song" | "artist";
 
 export const HNTA_GOOGLE_SHEET_TSV_URL =
@@ -90,15 +89,11 @@ export async function fetchHNTAKaraokeSongs(
 interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  searchField: SearchField;
-  onSearchFieldChange: (field: SearchField) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   onSearchChange,
-  searchField,
-  onSearchFieldChange,
 }) => {
   return (
     <div className="karaoke-toolbar">
@@ -109,9 +104,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={`Search by ${
-              searchField === "all" ? "artist, song, or anime..." : searchField + "..."
-            }`}
+            placeholder="Search by artist, song, or anime..."
             className="karaoke-search-input"
           />
           {searchQuery && (
@@ -119,23 +112,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ✕
             </button>
           )}
-        </div>
-      </div>
-
-      <div className="karaoke-toolbar-options">
-        <div className="flex items-center gap-1">
-          <span className="mr-1 font-medium text-gray-500 dark:text-slate-400">
-            Search field:
-          </span>
-          {(["all", "song", "anime", "artist"] as SearchField[]).map((field) => (
-            <button
-              key={field}
-              onClick={() => onSearchFieldChange(field)}
-              className={`karaoke-btn ${searchField === field ? "karaoke-btn-active" : ""}`}
-            >
-              {field}
-            </button>
-          ))}
         </div>
       </div>
     </div>
@@ -217,7 +193,6 @@ export const KaraokeApp: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchField, setSearchField] = useState<SearchField>("all");
   const [sortOption, setSortOption] = useState<SortOption>("anime");
 
   useEffect(() => {
@@ -243,16 +218,12 @@ export const KaraokeApp: React.FC = () => {
 
     const queryFold = foldText(searchQuery);
     if (queryFold) {
-      list = list.filter((s) => {
-        if (searchField === "song") return s.songFold.includes(queryFold);
-        if (searchField === "anime") return s.animeFold.includes(queryFold);
-        if (searchField === "artist") return s.artistFold.includes(queryFold);
-        return (
+      list = list.filter(
+        (s) =>
           s.songFold.includes(queryFold) ||
           s.animeFold.includes(queryFold) ||
           s.artistFold.includes(queryFold)
-        );
-      });
+      );
     }
 
     const sorted = [...list].sort((a, b) => {
@@ -272,7 +243,7 @@ export const KaraokeApp: React.FC = () => {
     });
 
     return sorted;
-  }, [allSongs, searchQuery, searchField, sortOption]);
+  }, [allSongs, searchQuery, sortOption]);
 
   return (
     <div className="w-full font-sans">
@@ -285,8 +256,6 @@ export const KaraokeApp: React.FC = () => {
       <SearchBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchField={searchField}
-        onSearchFieldChange={setSearchField}
       />
 
       <main className="w-full">
