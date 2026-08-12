@@ -10,8 +10,6 @@ export interface KaraokeSong {
   artist: string;
   song: string;
   anime: string;
-  category?: string;
-  isNew?: boolean;
   artistFold: string;
   songFold: string;
   animeFold: string;
