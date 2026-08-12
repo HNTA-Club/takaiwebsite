@@ -21,8 +21,6 @@ export type SortOption = "anime" | "song" | "artist";
 export const HNTA_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
 
-
-
 /* ==========================================================================
    UTILITIES & PARSERS
    ========================================================================== */
@@ -77,10 +75,6 @@ export async function fetchHNTAKaraokeSongs(
   return parseTSVData(text);
 }
 
-
-
-
-
 /* ==========================================================================
    REACT COMPONENTS
    ========================================================================== */
@@ -100,32 +94,44 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onSortOptionChange,
 }) => {
   return (
-    <div className="karaoke-toolbar">
-      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-        <div className="karaoke-search-input-wrapper">
-          <span className="karaoke-search-icon">🔍</span>
+    <div className="mb-4 flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        {/* Search input field */}
+        <div className="relative flex-1">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by artist, song, or anime..."
-            className="karaoke-search-input"
+            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-9 pr-8 text-sm outline-none focus:border-brand-pink dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
           {searchQuery && (
-            <button onClick={() => onSearchChange("")} className="karaoke-search-clear">
+            <button
+              onClick={() => onSearchChange("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 hover:text-gray-600 dark:hover:text-slate-200"
+            >
               ✕
             </button>
           )}
         </div>
 
-        {/* Sort selector bar */}
+        {/* Sort Option Selector */}
         <div className="flex items-center gap-1.5 text-xs">
-          <span className="font-medium text-gray-500 dark:text-slate-400">Sort by:</span>
+          <span className="font-medium text-gray-500 dark:text-slate-400">
+            Sort by:
+          </span>
           {(["anime", "song", "artist"] as SortOption[]).map((option) => (
             <button
               key={option}
               onClick={() => onSortOptionChange(option)}
-              className={`karaoke-btn ${sortOption === option ? "karaoke-btn-active" : ""}`}
+              className={`rounded border px-2.5 py-1 text-xs font-medium transition-colors ${
+                sortOption === option
+                  ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-sm dark:border-brand-pink dark:bg-brand-pink"
+                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              }`}
             >
               {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
             </button>
@@ -136,7 +142,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 
-/* Horizontal Song Table Component */
+/* Horizontal Song Table / Mobile Cards Component */
 interface SongTableProps {
   songs: KaraokeSong[];
   sortOption: SortOption;
@@ -165,7 +171,10 @@ const SongTable: React.FC<SongTableProps> = ({
 
     return parts.map((part, i) =>
       regex.test(part) ? (
-        <mark key={i} className="karaoke-mark-match">
+        <mark
+          key={i}
+          className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text dark:bg-search-highlight-dark-bg dark:text-search-highlight-dark-text"
+        >
           {part}
         </mark>
       ) : (
@@ -177,36 +186,57 @@ const SongTable: React.FC<SongTableProps> = ({
   return (
     <div>
       {/* Desktop & Tablet Table View (hidden on mobile < 640px) */}
-      <div className="hidden sm:block karaoke-table-wrapper">
-        <table className="karaoke-table">
-          <thead>
+      <div className="hidden w-full overflow-x-auto rounded-lg border border-gray-200 shadow-sm dark:border-slate-800 sm:block">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
             <tr>
-              <th scope="col" onClick={() => onSortOptionChange("artist")}>
+              <th
+                scope="col"
+                onClick={() => onSortOptionChange("artist")}
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+              >
                 <div className="flex items-center gap-1">
                   <span>Artist</span>
-                  {sortOption === "artist" && <span>↓</span>}
+                  {sortOption === "artist" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
                 </div>
               </th>
-              <th scope="col" onClick={() => onSortOptionChange("song")}>
+              <th
+                scope="col"
+                onClick={() => onSortOptionChange("song")}
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+              >
                 <div className="flex items-center gap-1">
                   <span>Song Title</span>
-                  {sortOption === "song" && <span>↓</span>}
+                  {sortOption === "song" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
                 </div>
               </th>
-              <th scope="col" onClick={() => onSortOptionChange("anime")}>
+              <th
+                scope="col"
+                onClick={() => onSortOptionChange("anime")}
+                className="cursor-pointer px-4 py-3 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+              >
                 <div className="flex items-center gap-1">
                   <span>Anime / Source</span>
-                  {sortOption === "anime" && <span>↓</span>}
+                  {sortOption === "anime" && <span className="text-brand-pink dark:text-brand-pink-dark">↓</span>}
                 </div>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100 bg-white dark:divide-slate-800/60 dark:bg-slate-950">
             {songs.map((song) => (
-              <tr key={song.id} className="karaoke-row">
-                <td className="karaoke-cell-artist">{highlightMatch(song.artist)}</td>
-                <td className="karaoke-cell-song">{highlightMatch(song.song)}</td>
-                <td className="karaoke-cell-anime">{highlightMatch(song.anime || "—")}</td>
+              <tr
+                key={song.id}
+                className="transition-colors hover:bg-gray-50 dark:hover:bg-slate-900/60"
+              >
+                <td className="px-4 py-2.5 font-medium text-gray-900 dark:text-slate-200">
+                  {highlightMatch(song.artist)}
+                </td>
+                <td className="px-4 py-2.5 font-semibold text-brand-pink dark:text-brand-pink-dark">
+                  {highlightMatch(song.song)}
+                </td>
+                <td className="px-4 py-2.5 text-gray-600 dark:text-slate-400">
+                  {highlightMatch(song.anime || "—")}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -214,22 +244,33 @@ const SongTable: React.FC<SongTableProps> = ({
       </div>
 
       {/* Mobile Stacked Card View (visible only on mobile < 640px) */}
-      <div className="block sm:hidden space-y-2.5">
+      <div className="block space-y-2.5 sm:hidden">
         {songs.map((song) => (
-          <div key={song.id} className="karaoke-mobile-card">
-            <div className="karaoke-mobile-card-header">
-              <span className="karaoke-mobile-anime-tag">
+          <div
+            key={song.id}
+            className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-colors hover:bg-gray-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800/80"
+          >
+            <div className="mb-1">
+              <span className="inline-block rounded border border-brand-purple-bg bg-brand-purple-bg px-1.5 py-0.5 text-[11px] font-semibold text-brand-purple-text dark:border-brand-purple-dark-border dark:bg-brand-purple-dark-bg dark:text-brand-purple-dark-text">
                 {highlightMatch(song.anime || "Original / Special")}
               </span>
             </div>
-            <h4 className="karaoke-mobile-song-title">{highlightMatch(song.song)}</h4>
-            <p className="karaoke-mobile-artist">{highlightMatch(song.artist)}</p>
+            <h4 className="text-sm font-bold text-brand-pink dark:text-brand-pink-dark">
+              {highlightMatch(song.song)}
+            </h4>
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">
+              {highlightMatch(song.artist)}
+            </p>
           </div>
         ))}
       </div>
     </div>
   );
 };
+
+/* ==========================================================================
+   MAIN EXPORT COMPONENT
+   ========================================================================== */
 
 export const KaraokeApp: React.FC = () => {
   const [allSongs, setAllSongs] = useState<KaraokeSong[]>([]);
@@ -298,7 +339,7 @@ export const KaraokeApp: React.FC = () => {
 
   return (
     <div className="w-full font-sans">
-      <div className="karaoke-stats-bar">
+      <div className="mb-3 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
         <span>
           Showing <strong>{filteredSongs.length}</strong> of <strong>{allSongs.length}</strong> songs
         </span>
@@ -326,7 +367,7 @@ export const KaraokeApp: React.FC = () => {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="mt-2 text-xs font-semibold text-pink-600 underline"
+                className="mt-2 text-xs font-semibold text-brand-pink underline dark:text-brand-pink-dark"
               >
                 Reset Search
               </button>

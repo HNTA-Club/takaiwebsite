@@ -1,2 +1,19 @@
 @import "tailwindcss";
-@import "./karaoke.css";
+
+@theme {
+  --color-brand-pink: #db2777;
+  --color-brand-pink-hover: #be185d;
+  --color-brand-pink-dark: #f472b6;
+
+  --color-brand-purple: #7c3aed;
+  --color-brand-purple-bg: #f3e8ff;
+  --color-brand-purple-text: #6b21a8;
+  --color-brand-purple-dark-bg: #3b0764;
+  --color-brand-purple-dark-text: #d8b4fe;
+  --color-brand-purple-dark-border: #6b21a8;
+
+  --color-search-highlight-bg: #fef08a;
+  --color-search-highlight-text: #713f12;
+  --color-search-highlight-dark-bg: #831843;
+  --color-search-highlight-dark-text: #fce7f3;
+}
