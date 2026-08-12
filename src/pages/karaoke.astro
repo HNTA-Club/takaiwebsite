@@ -1,0 +1,40 @@
+---
+import Layout from "../layouts/Layout.astro";
+import KaraokeApp from "../components/KaraokeApp";
+---
+
+<Layout title="HNTA Karaoke">
+  <div class="space-y-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100 sm:text-3xl">
+        Karaoke Song Library
+      </h1>
+      <p class="mt-1 text-xs text-gray-500 dark:text-slate-400">
+        Search our anime karaoke collection, filter by artist or anime, or import your MyAnimeList export.
+      </p>
+    </div>
+
+    {/* Community & Guide Links Bar */}
+    <div class="flex flex-wrap items-center gap-4 text-xs font-medium border-b border-gray-200 pb-3 dark:border-slate-800">
+      <a
+        href="https://discord.com/channels/501030515537608705/1180844304466460682"
+        target="_blank"
+        rel="noreferrer"
+        class="text-indigo-600 hover:underline dark:text-indigo-400"
+      >
+        💬 Discord Karaoke Thread
+      </a>
+      <a
+        href="https://docs.google.com/document/d/1hSYBtROm4BwvjohrkAhErUK8MxWyBs8X77ogujkFfQs/edit?usp=sharing"
+        target="_blank"
+        rel="noreferrer"
+        class="text-pink-600 hover:underline dark:text-pink-400"
+      >
+        📖 How to make a karaoke song
+      </a>
+    </div>
+
+    {/* React Karaoke Island */}
+    <KaraokeApp client:load />
+  </div>
+</Layout>
