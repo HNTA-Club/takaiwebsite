@@ -88,6 +88,8 @@ interface SearchBarProps {
   sortOption: SortOption;
   sortOrder: SortOrder;
   onSelectSort: (sort: SortOption) => void;
+  filteredCount: number;
+  totalSongs: number;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -96,6 +98,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   sortOption,
   sortOrder,
   onSelectSort,
+  filteredCount,
+  totalSongs,
 }) => {
   return (
     <div className="mb-4 flex flex-col gap-3 rounded-xl border border-site-border bg-site-toolbar-bg p-4 shadow-xs">
@@ -121,25 +125,33 @@ const SearchBar: React.FC<SearchBarProps> = ({
           )}
         </div>
 
-        {/* Sort Option Selector (visible ONLY on mobile < 640px) */}
-        <div className="flex sm:hidden items-center gap-1.5 text-xs">
-          <span className="font-medium text-site-text-muted">
-            Sort by:
+        {/* Toolbar info & mobile sort controls */}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:justify-end">
+          {/* Song stats text inside toolbar */}
+          <span className="text-xs text-site-text-muted">
+            Showing <strong>{filteredCount}</strong> of <strong>{totalSongs}</strong> songs
           </span>
-          {(["anime", "song", "artist"] as SortOption[]).map((option) => (
-            <button
-              key={option}
-              onClick={() => onSelectSort(option)}
-              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                sortOption === option
-                  ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
-                  : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
-              }`}
-            >
-              {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
-              {sortOption === option && (sortOrder === "asc" ? " ↓" : " ↑")}
-            </button>
-          ))}
+
+          {/* Sort Option Selector (visible ONLY on mobile < 640px) */}
+          <div className="flex items-center gap-1.5 sm:hidden">
+            <span className="font-medium text-site-text-muted">
+              Sort by:
+            </span>
+            {(["anime", "song", "artist"] as SortOption[]).map((option) => (
+              <button
+                key={option}
+                onClick={() => onSelectSort(option)}
+                className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                  sortOption === option
+                    ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
+                    : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
+                }`}
+              >
+                {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
+                {sortOption === option && (sortOrder === "asc" ? " ↓" : " ↑")}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -378,18 +390,14 @@ export const KaraokeApp: React.FC = () => {
 
   return (
     <div className="w-full font-sans">
-      <div className="mb-3 flex items-center justify-between text-xs text-site-text-muted">
-        <span>
-          Showing <strong>{filteredSongs.length}</strong> of <strong>{allSongs.length}</strong> songs
-        </span>
-      </div>
-
       <SearchBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         sortOption={sortOption}
         sortOrder={sortOrder}
         onSelectSort={handleSelectSort}
+        filteredCount={filteredSongs.length}
+        totalSongs={allSongs.length}
       />
 
       <main className="w-full">
