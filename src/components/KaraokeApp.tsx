@@ -94,10 +94,9 @@ const SortableHeader: React.FC<SortableHeaderProps> = ({
   currentSortOrder,
   onSelectSort,
 }) => (
-  <th
-    scope="col"
+  <div
     onClick={() => onSelectSort(field)}
-    className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
+    className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors flex items-center bg-site-toolbar-bg border-b border-site-border"
     title={`Click to sort by ${label.toLowerCase()}`}
     role="button"
     aria-label={`Sort by ${label.toLowerCase()}`}
@@ -111,7 +110,7 @@ const SortableHeader: React.FC<SortableHeaderProps> = ({
           <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
         ))}
     </div>
-  </th>
+  </div>
 );
 
 /* Search Toolbar Component */
@@ -239,77 +238,59 @@ const SongTable: React.FC<SongTableProps> = ({
   );
 
   return (
-    <div>
-      {/* Desktop & Tablet Table View (hidden on mobile < 640px) */}
-      <div className="hidden w-full overflow-x-auto rounded-xl border border-site-border bg-site-card-bg shadow-xs sm:block">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-site-border bg-site-toolbar-bg text-xs uppercase tracking-wider text-site-text-muted">
-            <tr>
-              <SortableHeader
-                label="Artist"
-                field="artist"
-                currentSortOption={sortOption}
-                currentSortOrder={sortOrder}
-                onSelectSort={onSelectSort}
-              />
-              <SortableHeader
-                label="Song Title"
-                field="song"
-                currentSortOption={sortOption}
-                currentSortOrder={sortOrder}
-                onSelectSort={onSelectSort}
-              />
-              <SortableHeader
-                label="Anime / Source"
-                field="anime"
-                currentSortOption={sortOption}
-                currentSortOrder={sortOrder}
-                onSelectSort={onSelectSort}
-              />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-site-border-subtle bg-site-card-bg">
-            {songs.map((song) => (
-              <tr
-                key={song.id}
-                className="transition-colors hover:bg-site-hover"
-              >
-                <td className="px-4 py-2.5 font-medium text-site-text">
-                  {highlightMatch(song.artist)}
-                </td>
-                <td className="px-4 py-2.5 font-semibold text-brand-pink">
-                  {highlightMatch(song.song)}
-                </td>
-                <td className="px-4 py-2.5 text-site-text-muted">
-                  {highlightMatch(song.anime || "—")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="w-full rounded-xl border border-site-border bg-site-card-bg shadow-xs overflow-hidden text-sm sm:grid sm:grid-cols-3">
+      {/* Desktop Header */}
+      <div className="hidden sm:contents text-xs uppercase tracking-wider text-site-text-muted">
+        <SortableHeader
+          label="Artist"
+          field="artist"
+          currentSortOption={sortOption}
+          currentSortOrder={sortOrder}
+          onSelectSort={onSelectSort}
+        />
+        <SortableHeader
+          label="Song Title"
+          field="song"
+          currentSortOption={sortOption}
+          currentSortOrder={sortOrder}
+          onSelectSort={onSelectSort}
+        />
+        <SortableHeader
+          label="Anime / Source"
+          field="anime"
+          currentSortOption={sortOption}
+          currentSortOrder={sortOrder}
+          onSelectSort={onSelectSort}
+        />
       </div>
 
-      {/* Mobile Stacked Card View (visible only on mobile < 640px) */}
-      <div className="block space-y-2.5 sm:hidden">
-        {songs.map((song) => (
-          <div
-            key={song.id}
-            className="rounded-xl border border-site-border bg-site-card-bg p-3.5 shadow-xs transition-colors hover:bg-site-hover"
-          >
-            <div className="mb-1">
-              <span className="inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
-                {highlightMatch(song.anime || "Original / Special")}
-              </span>
-            </div>
-            <h4 className="text-sm font-bold text-brand-pink">
-              {highlightMatch(song.song)}
-            </h4>
-            <p className="mt-0.5 text-xs text-site-text-muted">
-              {highlightMatch(song.artist)}
-            </p>
+      {/* Song Grid / Cards */}
+      {songs.map((song) => (
+        <div
+          key={song.id}
+          className="sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent"
+        >
+          {/* Artist */}
+          <div className="order-3 sm:order-none mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+            {highlightMatch(song.artist)}
           </div>
-        ))}
-      </div>
+
+          {/* Song Title */}
+          <div className="order-2 sm:order-none text-sm font-bold sm:font-semibold text-brand-pink sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+            {highlightMatch(song.song)}
+          </div>
+
+          {/* Anime / Source */}
+          <div className="order-1 sm:order-none mb-1 sm:mb-0 sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:text-site-text-muted sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+            <span className="sm:hidden inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
+              {highlightMatch(song.anime || "Original / Special")}
+            </span>
+            <span className="hidden sm:inline">
+              {highlightMatch(song.anime || "—")}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
