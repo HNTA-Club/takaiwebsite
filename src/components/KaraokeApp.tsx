@@ -5,26 +5,42 @@ import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
    TYPES & CONSTANTS
    ========================================================================== */
 
+// Represents a single karaoke song entry fetched from the song database
 export interface KaraokeSong {
+  // Unique ID generated from normalized artist, song, anime, and row index
   id: string;
+  // Display name of the artist or band
   artist: string;
+  // Display title of the song
   song: string;
+  // Name of the anime, series, or source material
   anime: string;
+  // Normalized lowercase string of artist (accents & punctuation removed) for fast searching
   artistFold: string;
+  // Normalized lowercase string of song title for fast searching
   songFold: string;
+  // Normalized lowercase string of anime source for fast searching
   animeFold: string;
 }
 
+// Field available for sorting the song list
 export type SortOption = "anime" | "song" | "artist";
+
+// Direction of list sorting
 export type SortOrder = "asc" | "desc";
 
-export const HNTA_GOOGLE_SHEET_TSV_URL =
+// Public Google Sheets published TSV URL containing the TaKAi karaoke database
+export const TAKAI_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
 
 /* ==========================================================================
    UTILITIES & PARSERS
    ========================================================================== */
 
+/**
+ * Normalizes input text for fuzzy searching.
+ * Converts to lowercase, strips accents/diacritics (e.g. 'é' -> 'e'), and removes punctuation & spaces.
+ */
 export function normalizeText(str: string): string {
   return (str || "")
     .toLowerCase()
@@ -33,6 +49,10 @@ export function normalizeText(str: string): string {
     .replace(/[?!:.\-—_,'"()\[\]\s]/g, "");
 }
 
+/**
+ * Parses raw TSV (Tab-Separated Values) string from Google Sheets into structured KaraokeSong objects.
+ * Skips empty rows and pre-computes normalized search strings for fast filtering.
+ */
 export function parseTSVData(tsvText: string): KaraokeSong[] {
   const lines = tsvText.replace(/\r/g, "").split("\n");
   const songs: KaraokeSong[] = [];
@@ -64,8 +84,11 @@ export function parseTSVData(tsvText: string): KaraokeSong[] {
   return songs;
 }
 
-export async function fetchHNTAKaraokeSongs(
-  url = HNTA_GOOGLE_SHEET_TSV_URL
+/**
+ * Fetches the karaoke song list from the club's published Google Sheet.
+ */
+export async function fetchTakaiKaraokeSongs(
+  url = TAKAI_GOOGLE_SHEET_TSV_URL
 ): Promise<KaraokeSong[]> {
   const response = await fetch(url);
   if (!response.ok) {
@@ -79,6 +102,7 @@ export async function fetchHNTAKaraokeSongs(
    REACT COMPONENTS
    ========================================================================== */
 
+// Props for the SortableHeader component
 interface SortableHeaderProps {
   label: string;
   field: SortOption;
@@ -87,6 +111,10 @@ interface SortableHeaderProps {
   onSelectSort: (sort: SortOption) => void;
 }
 
+/**
+ * Interactive header element for table columns on desktop.
+ * Shows active sorting indicators (ChevronUp / ChevronDown) and triggers sort toggle on click.
+ */
 const SortableHeader: React.FC<SortableHeaderProps> = ({
   label,
   field,
@@ -113,7 +141,7 @@ const SortableHeader: React.FC<SortableHeaderProps> = ({
   </div>
 );
 
-/* Search Toolbar Component */
+// Props for the SearchBar component
 interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -124,6 +152,10 @@ interface SearchBarProps {
   totalSongs: number;
 }
 
+/**
+ * Search controls component containing the standalone search input, clear button,
+ * total songs count summary, and mobile sort selection buttons.
+ */
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   onSearchChange,
@@ -189,7 +221,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 
-/* Horizontal Song Table / Mobile Cards Component */
+// Props for the SongTable component
 interface SongTableProps {
   songs: KaraokeSong[];
   sortOption: SortOption;
@@ -198,6 +230,11 @@ interface SongTableProps {
   searchQuery?: string;
 }
 
+/**
+ * Unified list component using a single CSS Grid layout.
+ * On desktop (>= 640px), renders as a 3-column table.
+ * On mobile (< 640px), collapses into stacked card items via display: contents.
+ */
 const SongTable: React.FC<SongTableProps> = ({
   songs,
   sortOption,
@@ -205,6 +242,7 @@ const SongTable: React.FC<SongTableProps> = ({
   onSelectSort,
   searchQuery = "",
 }) => {
+  // Highlights substring matches in text matching the user's active search terms
   const highlightMatch = React.useCallback(
     (text: string) => {
       if (!searchQuery.trim() || !text) return text || "";
@@ -297,16 +335,23 @@ const SongTable: React.FC<SongTableProps> = ({
    MAIN EXPORT COMPONENT
    ========================================================================== */
 
+/**
+ * Main Karaoke Application Component.
+ * Fetches song data from Google Sheets, manages search/sort state,
+ * and renders the interactive search bar and responsive song list.
+ */
 export const KaraokeApp: React.FC = () => {
   const [allSongs, setAllSongs] = useState<KaraokeSong[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
+  // Deferred query keeps input typing 100% instant while filtering runs in background
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
+  // Toggles sort direction if clicking the same field, or sets field and defaults to asc
   const handleSelectSort = React.useCallback((option: SortOption) => {
     if (sortOption === option) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -316,11 +361,12 @@ export const KaraokeApp: React.FC = () => {
     }
   }, [sortOption]);
 
+  // Fetches song database on component mount
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
-        const songs = await fetchHNTAKaraokeSongs();
+        const songs = await fetchTakaiKaraokeSongs();
         setAllSongs(songs);
         setError(null);
       } catch (err: unknown) {
@@ -335,6 +381,7 @@ export const KaraokeApp: React.FC = () => {
     loadData();
   }, []);
 
+  // Filters and sorts songs based on current search terms and sort selection
   const filteredSongs = useMemo(() => {
     let list = allSongs;
 
