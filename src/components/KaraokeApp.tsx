@@ -79,6 +79,41 @@ export async function fetchHNTAKaraokeSongs(
    REACT COMPONENTS
    ========================================================================== */
 
+interface SortableHeaderProps {
+  label: string;
+  field: SortOption;
+  currentSortOption: SortOption;
+  currentSortOrder: SortOrder;
+  onSelectSort: (sort: SortOption) => void;
+}
+
+const SortableHeader: React.FC<SortableHeaderProps> = ({
+  label,
+  field,
+  currentSortOption,
+  currentSortOrder,
+  onSelectSort,
+}) => (
+  <th
+    scope="col"
+    onClick={() => onSelectSort(field)}
+    className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
+    title={`Click to sort by ${label.toLowerCase()}`}
+    role="button"
+    aria-label={`Sort by ${label.toLowerCase()}`}
+  >
+    <div className="flex items-center gap-1">
+      <span>{label}</span>
+      {currentSortOption === field &&
+        (currentSortOrder === "asc" ? (
+          <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
+        ) : (
+          <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
+        ))}
+    </div>
+  </th>
+);
+
 /* Search Toolbar Component */
 interface SearchBarProps {
   searchQuery: string;
@@ -117,6 +152,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               onClick={() => onSearchChange("")}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-site-text-muted hover:text-site-text transition-colors"
               title="Clear search"
+              aria-label="Clear search"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -126,7 +162,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         {/* Toolbar info & mobile sort controls */}
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:justify-end">
           {/* Song stats text inside toolbar */}
-          <span className="text-xs text-site-text-muted">
+          <span className="text-site-text-muted">
             Showing <strong>{filteredCount}</strong> of <strong>{totalSongs}</strong> songs
           </span>
 
@@ -144,6 +180,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
                     : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
                 }`}
+                aria-label={`Sort by ${option}`}
               >
                 {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
                 {sortOption === option && (sortOrder === "asc" ? " ↓" : " ↑")}
@@ -209,57 +246,27 @@ const SongTable: React.FC<SongTableProps> = ({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-site-border bg-site-toolbar-bg text-xs uppercase tracking-wider text-site-text-muted">
             <tr>
-              <th
-                scope="col"
-                onClick={() => onSelectSort("artist")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
-                title="Click to sort by artist"
-              >
-                <div className="flex items-center gap-1">
-                  <span>Artist</span>
-                  {sortOption === "artist" && (
-                    sortOrder === "asc" ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
-                    ) : (
-                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
-                    )
-                  )}
-                </div>
-              </th>
-              <th
-                scope="col"
-                onClick={() => onSelectSort("song")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
-                title="Click to sort by song title"
-              >
-                <div className="flex items-center gap-1">
-                  <span>Song Title</span>
-                  {sortOption === "song" && (
-                    sortOrder === "asc" ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
-                    ) : (
-                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
-                    )
-                  )}
-                </div>
-              </th>
-              <th
-                scope="col"
-                onClick={() => onSelectSort("anime")}
-                className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
-                title="Click to sort by anime/source"
-              >
-                <div className="flex items-center gap-1">
-                  <span>Anime / Source</span>
-                  {sortOption === "anime" && (
-                    sortOrder === "asc" ? (
-                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
-                    ) : (
-                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
-                    )
-                  )}
-                </div>
-              </th>
+              <SortableHeader
+                label="Artist"
+                field="artist"
+                currentSortOption={sortOption}
+                currentSortOrder={sortOrder}
+                onSelectSort={onSelectSort}
+              />
+              <SortableHeader
+                label="Song Title"
+                field="song"
+                currentSortOption={sortOption}
+                currentSortOrder={sortOrder}
+                onSelectSort={onSelectSort}
+              />
+              <SortableHeader
+                label="Anime / Source"
+                field="anime"
+                currentSortOption={sortOption}
+                currentSortOrder={sortOrder}
+                onSelectSort={onSelectSort}
+              />
             </tr>
           </thead>
           <tbody className="divide-y divide-site-border-subtle bg-site-card-bg">
@@ -321,14 +328,14 @@ export const KaraokeApp: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
-  const handleSelectSort = (option: SortOption) => {
+  const handleSelectSort = React.useCallback((option: SortOption) => {
     if (sortOption === option) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortOption(option);
       setSortOrder("asc");
     }
-  };
+  }, [sortOption]);
 
   useEffect(() => {
     async function loadData() {
