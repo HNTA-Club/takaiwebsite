@@ -174,32 +174,35 @@ const SongTable: React.FC<SongTableProps> = ({
   onSelectSort,
   searchQuery = "",
 }) => {
-  const highlightMatch = (text: string) => {
-    if (!searchQuery.trim() || !text) return text || "";
-    const rawTokens = searchQuery
-      .trim()
-      .split(/\s+/)
-      .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-      .filter(Boolean);
+  const highlightMatch = React.useCallback(
+    (text: string) => {
+      if (!searchQuery.trim() || !text) return text || "";
+      const rawTokens = searchQuery
+        .trim()
+        .split(/\s+/)
+        .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .filter(Boolean);
 
-    if (rawTokens.length === 0) return text;
+      if (rawTokens.length === 0) return text;
 
-    const regex = new RegExp(`(${rawTokens.join("|")})`, "gi");
-    const parts = text.split(regex);
+      const regex = new RegExp(`(${rawTokens.join("|")})`, "gi");
+      const parts = text.split(regex);
 
-    return parts.map((part, i) =>
-      regex.test(part) ? (
-        <mark
-          key={i}
-          className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text"
-        >
-          {part}
-        </mark>
-      ) : (
-        part
-      )
-    );
-  };
+      return parts.map((part, i) =>
+        part.match(regex) ? (
+          <mark
+            key={i}
+            className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text"
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      );
+    },
+    [searchQuery]
+  );
 
   return (
     <div>
