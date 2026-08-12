@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, X, ChevronDown } from "lucide-react";
+import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
 
 /* ==========================================================================
    TYPES & CONSTANTS
@@ -18,6 +18,7 @@ export interface KaraokeSong {
 }
 
 export type SortOption = "anime" | "song" | "artist";
+export type SortOrder = "asc" | "desc";
 
 export const HNTA_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
@@ -85,14 +86,16 @@ interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   sortOption: SortOption;
-  onSortOptionChange: (sort: SortOption) => void;
+  sortOrder: SortOrder;
+  onSelectSort: (sort: SortOption) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   onSearchChange,
   sortOption,
-  onSortOptionChange,
+  sortOrder,
+  onSelectSort,
 }) => {
   return (
     <div className="mb-4 flex flex-col gap-3 rounded-xl border border-site-border bg-site-toolbar-bg p-4 shadow-xs">
@@ -118,15 +121,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
           )}
         </div>
 
-        {/* Sort Option Selector */}
-        <div className="flex items-center gap-1.5 text-xs">
+        {/* Sort Option Selector (visible ONLY on mobile < 640px) */}
+        <div className="flex sm:hidden items-center gap-1.5 text-xs">
           <span className="font-medium text-site-text-muted">
             Sort by:
           </span>
           {(["anime", "song", "artist"] as SortOption[]).map((option) => (
             <button
               key={option}
-              onClick={() => onSortOptionChange(option)}
+              onClick={() => onSelectSort(option)}
               className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
                 sortOption === option
                   ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
@@ -134,6 +137,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }`}
             >
               {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
+              {sortOption === option && (sortOrder === "asc" ? " ↓" : " ↑")}
             </button>
           ))}
         </div>
@@ -146,14 +150,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
 interface SongTableProps {
   songs: KaraokeSong[];
   sortOption: SortOption;
-  onSortOptionChange: (sort: SortOption) => void;
+  sortOrder: SortOrder;
+  onSelectSort: (sort: SortOption) => void;
   searchQuery?: string;
 }
 
 const SongTable: React.FC<SongTableProps> = ({
   songs,
   sortOption,
-  onSortOptionChange,
+  sortOrder,
+  onSelectSort,
   searchQuery = "",
 }) => {
   const highlightMatch = (text: string) => {
@@ -192,32 +198,53 @@ const SongTable: React.FC<SongTableProps> = ({
             <tr>
               <th
                 scope="col"
-                onClick={() => onSortOptionChange("artist")}
+                onClick={() => onSelectSort("artist")}
                 className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
+                title="Click to sort by artist"
               >
                 <div className="flex items-center gap-1">
                   <span>Artist</span>
-                  {sortOption === "artist" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
+                  {sortOption === "artist" && (
+                    sortOrder === "asc" ? (
+                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
+                    ) : (
+                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
+                    )
+                  )}
                 </div>
               </th>
               <th
                 scope="col"
-                onClick={() => onSortOptionChange("song")}
+                onClick={() => onSelectSort("song")}
                 className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
+                title="Click to sort by song title"
               >
                 <div className="flex items-center gap-1">
                   <span>Song Title</span>
-                  {sortOption === "song" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
+                  {sortOption === "song" && (
+                    sortOrder === "asc" ? (
+                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
+                    ) : (
+                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
+                    )
+                  )}
                 </div>
               </th>
               <th
                 scope="col"
-                onClick={() => onSortOptionChange("anime")}
+                onClick={() => onSelectSort("anime")}
                 className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors"
+                title="Click to sort by anime/source"
               >
                 <div className="flex items-center gap-1">
                   <span>Anime / Source</span>
-                  {sortOption === "anime" && <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />}
+                  {sortOption === "anime" && (
+                    sortOrder === "asc" ? (
+                      <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
+                    ) : (
+                      <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
+                    )
+                  )}
                 </div>
               </th>
             </tr>
@@ -279,6 +306,16 @@ export const KaraokeApp: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("anime");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  const handleSelectSort = (option: SortOption) => {
+    if (sortOption === option) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortOption(option);
+      setSortOrder("asc");
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -331,11 +368,13 @@ export const KaraokeApp: React.FC = () => {
         valA = a.artist || "ZZZ";
         valB = b.artist || "ZZZ";
       }
-      return valA.localeCompare(valB, undefined, { sensitivity: "base" });
+
+      const cmp = valA.localeCompare(valB, undefined, { sensitivity: "base" });
+      return sortOrder === "desc" ? -cmp : cmp;
     });
 
     return sorted;
-  }, [allSongs, searchQuery, sortOption]);
+  }, [allSongs, searchQuery, sortOption, sortOrder]);
 
   return (
     <div className="w-full font-sans">
@@ -349,7 +388,8 @@ export const KaraokeApp: React.FC = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         sortOption={sortOption}
-        onSortOptionChange={setSortOption}
+        sortOrder={sortOrder}
+        onSelectSort={handleSelectSort}
       />
 
       <main className="w-full">
@@ -377,7 +417,8 @@ export const KaraokeApp: React.FC = () => {
           <SongTable
             songs={filteredSongs}
             sortOption={sortOption}
-            onSortOptionChange={setSortOption}
+            sortOrder={sortOrder}
+            onSelectSort={handleSelectSort}
             searchQuery={searchQuery}
           />
         )}
