@@ -25,7 +25,7 @@ export const HNTA_GOOGLE_SHEET_TSV_URL =
    UTILITIES & PARSERS
    ========================================================================== */
 
-export function foldText(str: string): string {
+export function normalizeText(str: string): string {
   return (str || "")
     .toLowerCase()
     .normalize("NFD")
@@ -48,16 +48,16 @@ export function parseTSVData(tsvText: string): KaraokeSong[] {
 
     if (!artist && !song && !anime) continue;
 
-    const id = `${foldText(artist)}_${foldText(song)}_${foldText(anime)}_${i}`;
+    const id = `${normalizeText(artist)}_${normalizeText(song)}_${normalizeText(anime)}_${i}`;
 
     songs.push({
       id,
       artist,
       song,
       anime,
-      artistFold: foldText(artist),
-      songFold: foldText(song),
-      animeFold: foldText(anime),
+      artistFold: normalizeText(artist),
+      songFold: normalizeText(song),
+      animeFold: normalizeText(anime),
     });
   }
 
@@ -175,11 +175,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <button
                 key={option}
                 onClick={() => onSelectSort(option)}
-                className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                  sortOption === option
+                className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sortOption === option
                     ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
                     : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
-                }`}
+                  }`}
                 aria-label={`Sort by ${option}`}
               >
                 {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
@@ -363,7 +362,7 @@ export const KaraokeApp: React.FC = () => {
     const tokens = deferredSearchQuery
       .trim()
       .split(/\s+/)
-      .map((t) => foldText(t))
+      .map((t) => normalizeText(t))
       .filter(Boolean);
 
     if (tokens.length > 0) {
