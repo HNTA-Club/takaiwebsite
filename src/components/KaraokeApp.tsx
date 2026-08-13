@@ -39,14 +39,16 @@ export const TAKAI_GOOGLE_SHEET_TSV_URL =
 
 /**
  * Normalizes input text for fuzzy searching.
- * Converts to lowercase, strips accents/diacritics (e.g. 'é' -> 'e'), and removes punctuation & spaces.
+ * Converts to lowercase, strips accents/diacritics (e.g. 'é' -> 'e'), replaces punctuation with spaces, and normalizes whitespace.
  */
 export function normalizeText(str: string): string {
   return (str || "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[?!:.\-—_,'"()\[\]\s]/g, "");
+    .replace(/[?!:.\-—_,'"()\[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /**
