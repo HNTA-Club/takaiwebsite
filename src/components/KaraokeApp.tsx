@@ -115,13 +115,13 @@ interface SortableHeaderProps {
  * Interactive header element for table columns on desktop.
  * Shows active sorting indicators (ChevronUp / ChevronDown) and triggers sort toggle on click.
  */
-const SortableHeader: React.FC<SortableHeaderProps> = ({
+const SortableHeader = ({
   label,
   field,
   currentSortOption,
   currentSortOrder,
   onSelectSort,
-}) => (
+}: SortableHeaderProps) => (
   <div
     onClick={() => onSelectSort(field)}
     className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors flex items-center bg-site-toolbar-bg border-b border-site-border"
@@ -156,7 +156,7 @@ interface SearchBarProps {
  * Search controls component containing the standalone search input, clear button,
  * total songs count summary, and mobile sort selection buttons.
  */
-const SearchBar: React.FC<SearchBarProps> = ({
+const SearchBar = ({
   searchQuery,
   onSearchChange,
   sortOption,
@@ -164,7 +164,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onSelectSort,
   filteredCount,
   totalSongs,
-}) => {
+}: SearchBarProps) => {
   return (
     <div className="mb-4 flex flex-col">
       {/* Standalone Search Input Field (outside card) */}
@@ -235,13 +235,13 @@ interface SongTableProps {
  * On desktop (>= 640px), renders as a 3-column table.
  * On mobile (< 640px), collapses into stacked card items via display: contents.
  */
-const SongTable: React.FC<SongTableProps> = ({
+const SongTable = ({
   songs,
   sortOption,
   sortOrder,
   onSelectSort,
   searchQuery = "",
-}) => {
+}: SongTableProps) => {
   // Highlights substring matches in text matching the user's active search terms
   const highlightMatch = React.useCallback(
     (text: string) => {
@@ -340,7 +340,7 @@ const SongTable: React.FC<SongTableProps> = ({
  * Fetches song data from Google Sheets, manages search/sort state,
  * and renders the interactive search bar and responsive song list.
  */
-export const KaraokeApp: React.FC = () => {
+export function KaraokeApp() {
   const [allSongs, setAllSongs] = useState<KaraokeSong[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -468,6 +468,6 @@ export const KaraokeApp: React.FC = () => {
       </main>
     </div>
   );
-};
+}
 
 export default KaraokeApp;
