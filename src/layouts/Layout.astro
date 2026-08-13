@@ -22,7 +22,7 @@ const menuLinks = [["/events", "Events"],
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-site-bg text-site-text antialiased">
+  <body>
     <header>
         <div class="fixed z-40 md:top-4 w-full">
             <div class="bg-white md:container mx-auto max-w-3xl p-5 shadow md:rounded-xl">
@@ -52,7 +52,7 @@ const menuLinks = [["/events", "Events"],
             mobileMenu.classList.toggle("hidden");
         });
     </script>
-    <main class="mx-auto max-w-5xl p-5"> <!-- classes should probably be moved to individual pages... -->
+    <main>
       <slot />
     </main>
   </body>
