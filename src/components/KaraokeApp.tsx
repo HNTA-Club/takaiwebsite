@@ -423,21 +423,29 @@ export function KaraokeApp() {
     }
 
     const sorted = [...list].sort((a, b) => {
-      let valA = "";
-      let valB = "";
-      if (sortOption === "anime") {
-        valA = a.anime || "ZZZ";
-        valB = b.anime || "ZZZ";
-      } else if (sortOption === "song") {
-        valA = a.song || "ZZZ";
-        valB = b.song || "ZZZ";
-      } else if (sortOption === "artist") {
-        valA = a.artist || "ZZZ";
-        valB = b.artist || "ZZZ";
+      // Priority chain based on active sort option: primary -> secondary -> tertiary
+      const fields: (keyof KaraokeSong)[] =
+        sortOption === "anime"
+          ? ["anime", "artist", "song"]
+          : sortOption === "artist"
+          ? ["artist", "anime", "song"]
+          : ["song", "anime", "artist"];
+
+      for (const field of fields) {
+        const valA = (a[field] as string) || "ZZZ";
+        const valB = (b[field] as string) || "ZZZ";
+
+        const cmp = valA.localeCompare(valB, undefined, {
+          sensitivity: "base",
+          numeric: true,
+        });
+
+        if (cmp !== 0) {
+          return sortOrder === "desc" ? -cmp : cmp;
+        }
       }
 
-      const cmp = valA.localeCompare(valB, undefined, { sensitivity: "base" });
-      return sortOrder === "desc" ? -cmp : cmp;
+      return 0;
     });
 
     return sorted;
