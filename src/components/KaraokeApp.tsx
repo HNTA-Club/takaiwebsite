@@ -15,11 +15,11 @@ export interface KaraokeSong {
   song: string;
   // Name of the anime, series, or source material
   anime: string;
-  // Normalized lowercase string of artist (accents & punctuation removed) for fast searching
+  // Normalized lowercase string of artist (diacritics removed; punctuation/whitespace normalized) for fast searching
   artistFold: string;
-  // Normalized lowercase string of song title for fast searching
+  // Normalized lowercase string of song title (diacritics removed; punctuation/whitespace normalized) for fast searching
   songFold: string;
-  // Normalized lowercase string of anime source for fast searching
+  // Normalized lowercase string of anime source (diacritics removed; punctuation/whitespace normalized) for fast searching
   animeFold: string;
 }
 
@@ -177,6 +177,7 @@ const SearchBar = ({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by artist, song, or anime..."
+          aria-label="Search by artist, song, or anime"
           className="w-full rounded-xl border border-site-border bg-site-card-bg py-2.5 pl-10 pr-9 text-sm text-site-text outline-none shadow-xs transition-all focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/20"
         />
         {searchQuery && (
@@ -306,7 +307,7 @@ const SongTable = ({
       {songs.map((song) => (
         <div
           key={song.id}
-          className="sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent"
+          className="group sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent"
         >
           {/* Artist */}
           <div className="order-3 sm:order-none mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
