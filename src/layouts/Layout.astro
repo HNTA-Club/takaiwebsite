@@ -1,5 +1,15 @@
 ---
 import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "TaKAi Website" } = Astro.props;
+
+const menuLinks = [["/events", "Events"],
+                   ["/gallery", "Gallery"],
+                   ["/about", "About"]];
 ---
 
 <!doctype html>
@@ -10,11 +20,40 @@ import "../styles/global.css";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title}</title>
   </head>
-  <body>
-    <div class="mx-auto max-w-3xl p-5">
+  <body class="min-h-screen bg-site-bg text-site-text antialiased">
+    <header>
+        <div class="fixed z-40 md:top-4 w-full">
+            <div class="bg-white md:container mx-auto max-w-3xl p-5 shadow md:rounded-xl">
+                <nav class="flex relative items-center justify-between">
+                    <span>logo</span> <!-- placeholder -->
+                    <div class="flex gap-x-10 items-center justify-evenly max-lg:hidden">
+                      {menuLinks.map((item) => (
+                        <a href={item[0]}>{item[1]}</a>
+                      ))}
+                    </div>
+                    <a href="/join" class="max-lg:hidden">Join</a>
+                    <button id="mobileMenuBtn" class="lg:hidden">M</button> <!-- placeholder -->
+                </nav>
+                <nav id="mobileMenu" class="flex flex-col hidden">
+                    {menuLinks.map((item) => (
+                      <a href={item[0]}>{item[1]}</a>
+                    ))}
+                    <a href="/join">Join</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <script type="text/javascript">
+        const mobileMenuBtn = document.querySelector("#mobileMenuBtn");
+        const mobileMenu = document.querySelector("#mobileMenu");
+        mobileMenuBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+        });
+    </script>
+    <main class="mx-auto max-w-5xl p-5"> <!-- classes should probably be moved to individual pages... -->
       <slot />
-    </div>
+    </main>
   </body>
 </html>
