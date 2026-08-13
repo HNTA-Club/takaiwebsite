@@ -26,7 +26,3 @@
   --color-search-highlight-text: #713f12;
 }
 
-body {
-  background-color: var(--color-site-bg);
-  color: var(--color-site-text);
-}
