@@ -207,11 +207,10 @@ const SearchBar = ({
             <button
               key={option}
               onClick={() => onSelectSort(option)}
-              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                sortOption === option
-                  ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
-                  : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
-              }`}
+              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sortOption === option
+                ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
+                : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
+                }`}
               aria-label={`Sort by ${option}`}
             >
               {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
@@ -310,17 +309,17 @@ const SongTable = ({
           className="group sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent"
         >
           {/* Artist */}
-          <div className="order-3 sm:order-none mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+          <div className="order-3 sm:order-0 mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
             {highlightMatch(song.artist)}
           </div>
 
           {/* Song Title */}
-          <div className="order-2 sm:order-none text-sm font-bold sm:font-semibold text-brand-pink sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+          <div className="order-2 sm:order-0 text-sm font-bold sm:font-semibold text-brand-pink sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
             {highlightMatch(song.song)}
           </div>
 
           {/* Anime / Source */}
-          <div className="order-1 sm:order-none mb-1 sm:mb-0 sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:text-site-text-muted sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+          <div className="order-1 sm:order-0 mb-1 sm:mb-0 sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:text-site-text-muted sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
             <span className="sm:hidden inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
               {highlightMatch(song.anime || "Original / Special")}
             </span>
@@ -429,8 +428,8 @@ export function KaraokeApp() {
         sortOption === "anime"
           ? ["anime", "artist", "song"]
           : sortOption === "artist"
-          ? ["artist", "anime", "song"]
-          : ["song", "anime", "artist"];
+            ? ["artist", "anime", "song"]
+            : ["song", "anime", "artist"];
 
       for (const field of fields) {
         const valA = (a[field] as string) || "ZZZ";
@@ -500,11 +499,10 @@ export function KaraokeApp() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
-        className={`fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brand-pink text-white shadow-lg transition-all duration-300 hover:bg-brand-pink/90 active:scale-95 sm:hidden ${
-          showScrollTop
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+        className={`fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brand-pink text-white shadow-lg transition-all duration-300 hover:bg-brand-pink/90 active:scale-95 sm:hidden ${showScrollTop
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
       >
         <ChevronUp className="h-6 w-6 stroke-[2.5]" />
       </button>
