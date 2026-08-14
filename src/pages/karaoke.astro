@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import KaraokeApp from "../components/karaoke";
+---
+
+<Layout>
+  <div class="text-site-text space-y-4 antialiased">
+    <div>
+      <h1 class="text-site-text text-2xl font-bold sm:text-3xl">
+        Karaoke Song Library
+      </h1>
+      <p class="text-site-text-muted mt-1 text-xs">
+        Search our anime karaoke collection, filter by artist or anime.
+      </p>
+    </div>
+
+    {/* Community & Guide Links Bar */}
+    <div
+      class="border-site-border flex flex-wrap items-center gap-4 border-b pb-3 text-xs font-medium"
+    >
+      <a
+        href="https://discord.gg/rhAjsWB8hz"
+        target="_blank"
+        rel="noreferrer"
+        class="text-brand-purple-text hover:underline"
+      >
+        Discord Karaoke Thread
+      </a>
+      <a
+        href="https://docs.google.com/document/d/1hSYBtROm4BwvjohrkAhErUK8MxWyBs8X77ogujkFfQs/edit?usp=sharing"
+        target="_blank"
+        rel="noreferrer"
+        class="text-brand-pink hover:underline"
+      >
+        How to make a karaoke song
+      </a>
+    </div>
+
+    {/* React Karaoke Island */}
+    <KaraokeApp client:load />
+  </div>
+</Layout>
