@@ -30,17 +30,17 @@ const menuLinks = [["/events", "Events"],
                     <span>logo</span> <!-- placeholder -->
                     <div class="flex gap-x-10 items-center justify-evenly max-lg:hidden">
                       {menuLinks.map((item) => (
-                        <a href={item[0]}>{item[1]}</a>
+                        <a href={item[0]} class="font-semibold hover:text-blue-600">{item[1]}</a>
                       ))}
                     </div>
-                    <a href="/join" class="max-lg:hidden">Join</a>
+                    <a href="/join" class="max-lg:hidden font-semibold hover:text-blue-600">Join</a>
                     <button id="mobileMenuBtn" type="button" class="lg:hidden" aria-controls="mobileMenu" aria-label="Toggle menu">M</button> <!-- placeholder -->
                 </nav>
-                <nav id="mobileMenu" class="flex-col hidden">
+                <nav id="mobileMenu" class="flex-col gap-y-2 pt-2 hidden">
                     {menuLinks.map((item) => (
-                      <a href={item[0]}>{item[1]}</a>
+                      <a href={item[0]} class="font-semibold hover:text-blue-600">{item[1]}</a>
                     ))}
-                    <a href="/join">Join</a>
+                    <a href="/join" class="font-semibold hover:text-blue-600">Join</a>
                 </nav>
             </div>
         </div>
