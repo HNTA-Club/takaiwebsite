@@ -34,9 +34,9 @@ const menuLinks = [["/events", "Events"],
                       ))}
                     </div>
                     <a href="/join" class="max-lg:hidden">Join</a>
-                    <button id="mobileMenuBtn" class="lg:hidden">M</button> <!-- placeholder -->
+                    <button id="mobileMenuBtn" type="button" class="lg:hidden" aria-controls="mobileMenu" aria-label="Toggle menu">M</button> <!-- placeholder -->
                 </nav>
-                <nav id="mobileMenu" class="flex flex-col hidden">
+                <nav id="mobileMenu" class="flex-col hidden">
                     {menuLinks.map((item) => (
                       <a href={item[0]}>{item[1]}</a>
                     ))}
@@ -45,11 +45,12 @@ const menuLinks = [["/events", "Events"],
             </div>
         </div>
     </header>
-    <script type="text/javascript">
+    <script is:inline>
         const mobileMenuBtn = document.querySelector("#mobileMenuBtn");
         const mobileMenu = document.querySelector("#mobileMenu");
         mobileMenuBtn.addEventListener("click", () => {
             mobileMenu.classList.toggle("hidden");
+            mobileMenu.classList.toggle("flex");
         });
     </script>
     <main>
