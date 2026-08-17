@@ -55,11 +55,13 @@ const menuLinks = [["/events", "Events"],
             mobileMenu.classList.toggle("flex");
         });
     </script>
-    <main>
-      <slot />
-    </main>
-    <footer class="bg-black text-white mx-auto p-5">
-      &copy; TaKAi board. Server infrastructure kindly provided by <a href="https://modeemi.fi/">Modeemi</a>.
-    </footer>
+    <div class="h-dvh flex flex-col justify-between">
+      <main class="grow">
+        <slot />
+      </main>
+      <footer class="bg-black text-white p-5 flex-none">
+        &copy; TaKAi board. Server infrastructure kindly provided by <a href="https://modeemi.fi/">Modeemi</a>.
+      </footer>
+    </div>
   </body>
 </html>
