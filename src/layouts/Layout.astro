@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import DiscordLogo from "../images/discord.svg";
 
 interface Props {
   title?: string;
@@ -8,6 +9,7 @@ interface Props {
 const { title = "TaKAi Website" } = Astro.props;
 
 const menuLinks = [["/events", "Events"],
+                   ["/join", "Join"],
                    ["/gallery", "Gallery"],
                    ["/about", "About"]];
 ---
@@ -33,14 +35,14 @@ const menuLinks = [["/events", "Events"],
                         <a href={item[0]} class="font-semibold hover:text-blue-600">{item[1]}</a>
                       ))}
                     </div>
-                    <a href="/join" class="max-lg:hidden font-semibold hover:text-blue-600">Join</a>
+                    <a href="https://discord.com" class="max-lg:hidden hover:text-blue-600" aria-label="Discord"><DiscordLogo width="32" height="32" /></a>
                     <button id="mobileMenuBtn" type="button" class="lg:hidden" aria-controls="mobileMenu" aria-label="Toggle menu">M</button> <!-- placeholder -->
                 </nav>
                 <nav id="mobileMenu" class="flex-col gap-y-2 pt-2 hidden">
                     {menuLinks.map((item) => (
                       <a href={item[0]} class="font-semibold hover:text-blue-600">{item[1]}</a>
                     ))}
-                    <a href="/join" class="font-semibold hover:text-blue-600">Join</a>
+                    <a href="https://discord.com" class="hover:text-blue-600" aria-label="Discord"><DiscordLogo width="32" height="32" /></a>
                 </nav>
             </div>
         </div>
