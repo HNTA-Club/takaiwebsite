@@ -12,6 +12,9 @@ const menuLinks = [["/events", "Events"],
                    ["/join", "Join"],
                    ["/gallery", "Gallery"],
                    ["/about", "About"]];
+
+const year = new Date().getFullYear();
+
 ---
 
 <!doctype html>
@@ -56,11 +59,11 @@ const menuLinks = [["/events", "Events"],
         });
     </script>
     <div class="h-dvh flex flex-col justify-between">
-      <main class="grow">
+      <main class="flex-1">
         <slot />
       </main>
       <footer class="bg-black text-white p-5 flex-none">
-        &copy; TaKAi board. Server infrastructure kindly provided by <a href="https://modeemi.fi/">Modeemi</a>.
+        &copy; {year} TaKAi board. Server infrastructure kindly provided by <a href="https://modeemi.fi/">Modeemi</a>.
       </footer>
     </div>
   </body>
