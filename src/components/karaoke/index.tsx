@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useDeferredValue } from "react";
 import { ChevronUp } from "lucide-react";
 import type { KaraokeSong } from "./data";
 import { fetchTakaiKaraokeSongs, normalizeText } from "./data";
@@ -23,6 +23,7 @@ export function KaraokeApp() {
 
   // Search & Sort State
   const [searchQuery, setSearchQuery] = useState("");
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
@@ -92,7 +93,7 @@ export function KaraokeApp() {
   // ==========================================
 
   // Apply Search Filter
-  const tokens = searchQuery
+  const tokens = deferredSearchQuery
     .trim()
     .split(/\s+/)
     .map(normalizeText)
@@ -178,7 +179,7 @@ export function KaraokeApp() {
             sortOption={sortOption}
             sortOrder={sortOrder}
             onSelectSort={handleSelectSort}
-            searchQuery={searchQuery}
+            searchQuery={deferredSearchQuery}
           />
         )}
       </main>
