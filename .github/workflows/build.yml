@@ -2,33 +2,31 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
 
 jobs:
   build:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    permissions: 
-      contents: write
 
     strategy:
       matrix:
         node-version: [24.x]
 
     steps:
-    - uses: actions/checkout@v6
-      with:
-        ref: ${{ github.head_ref }}
-    - uses: pnpm/setup@v2
-      with:
-        version: 11
-        runtime: node@24
-        cache: true
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: pnpm/setup@v2
+        with:
+          version: 11
+          runtime: node@24
+          cache: true
 
-    - run: pnpm format
-    - name: Commit formatting changes
-      run: |
+      - run: pnpm format
+      - name: Commit formatting changes
+        run: |
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -37,9 +35,9 @@ jobs:
           else
             echo "Already formatted, nothing to commit."
           fi
-    - run: pnpm audit
-    - run: pnpm lint
+      - run: pnpm audit
+      - run: pnpm lint
 
-    - name: Build
-      run: |
-        pnpm build
+      - name: Build
+        run: |
+          pnpm build
