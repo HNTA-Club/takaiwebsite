@@ -4,10 +4,10 @@ An [Astro](https://docs.astro.build) site with React islands, Tailwind CSS, and 
 
 ## Required tools
 
-| Tool        | Version    | Notes                                                                     |
-| :---------- | :--------- | :------------------------------------------------------------------------ |
-| **Node.js** | `>= 24`    | Enforced via `engines` in `package.json` — `pnpm install` fails if older. |
-| **pnpm**    | `11.x`     | The only supported package manager; `pnpm-lock.yaml` is committed.        |
+| Tool        | Version | Notes                                                                     |
+| :---------- | :------ | :------------------------------------------------------------------------ |
+| **Node.js** | `>= 24` | Enforced via `engines` in `package.json` — `pnpm install` fails if older. |
+| **pnpm**    | `11.x`  | The only supported package manager; `pnpm-lock.yaml` is committed.        |
 
 Everything else — Astro, TypeScript, ESLint, Prettier — is a project dependency and arrives with `pnpm install`. There are no global installs and no other required system packages.
 
