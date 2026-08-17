@@ -1,95 +1,70 @@
-import { useCallback } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import type { KaraokeSong, SortOption, SortOrder } from "./types";
+import type { KaraokeSong } from "./data";
+import { SortableHeader } from "./SortableHeader";
 
-interface SortableHeaderProps {
-  label: string;
-  field: SortOption;
-  currentSortOption: SortOption;
-  currentSortOrder: SortOrder;
-  onSelectSort: (sort: SortOption) => void;
-}
+// Field available for sorting the song list
+export type SortOption = "anime" | "song" | "artist";
 
-/**
- * Interactive header element for table columns on desktop.
- * Shows active sorting indicators (ChevronUp / ChevronDown) and triggers sort toggle on click.
- */
-const SortableHeader = ({
-  label,
-  field,
-  currentSortOption,
-  currentSortOrder,
-  onSelectSort,
-}: SortableHeaderProps) => (
-  <div
-    onClick={() => onSelectSort(field)}
-    className="cursor-pointer px-4 py-3 font-semibold hover:bg-site-hover transition-colors flex items-center bg-site-toolbar-bg border-b border-site-border"
-    title={`Click to sort by ${label.toLowerCase()}`}
-    role="button"
-    aria-label={`Sort by ${label.toLowerCase()}`}
-  >
-    <div className="flex items-center gap-1">
-      <span>{label}</span>
-      {currentSortOption === field &&
-        (currentSortOrder === "asc" ? (
-          <ChevronDown className="h-3.5 w-3.5 text-brand-pink" />
-        ) : (
-          <ChevronUp className="h-3.5 w-3.5 text-brand-pink" />
-        ))}
-    </div>
-  </div>
-);
+// Direction of list sorting
+export type SortOrder = "asc" | "desc";
 
-export interface SongTableProps {
-  songs: KaraokeSong[];
-  sortOption: SortOption;
-  sortOrder: SortOrder;
-  onSelectSort: (sort: SortOption) => void;
-  searchQuery?: string;
-}
-
-/**
- * Unified list component using a single CSS Grid layout.
- * On desktop (>= 640px), renders as a 3-column table.
- * On mobile (< 640px), collapses into stacked card items via display: contents.
- */
 export function SongTable({
   songs,
   sortOption,
   sortOrder,
   onSelectSort,
   searchQuery = "",
-}: SongTableProps) {
-  // Highlights substring matches in text matching the user's active search terms
-  const highlightMatch = useCallback(
-    (text: string) => {
-      if (!searchQuery.trim() || !text) return text || "";
-      const rawTokens = searchQuery
-        .trim()
-        .split(/\s+/)
-        .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-        .filter(Boolean);
+}: {
+  songs: KaraokeSong[];
+  sortOption: SortOption;
+  sortOrder: SortOrder;
+  onSelectSort: (sort: SortOption) => void;
+  searchQuery?: string;
+}) {
+  // --- Highlighting Logic ---
+  // We compile the search terms into a single Regular Expression here at the component root.
+  // Doing this outside of `highlightMatch` ensures we only compile the regex ONCE per render,
+  // rather than re-compiling it for every single text field of every single song in the table.
 
-      if (rawTokens.length === 0) return text;
+  // 1. Split the search query by spaces into individual words (tokens).
+  // 2. Escape any special regex characters in each token to prevent crashes.
+  const rawTokens = searchQuery
+    .trim()
+    .split(/\s+/)
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .filter(Boolean);
 
-      const regex = new RegExp(`(${rawTokens.join("|")})`, "gi");
-      const parts = text.split(regex);
+  // 3. Join tokens with the OR operator `|` and wrap them in a capturing group `(...)`.
+  // The 'gi' flags make the search global (find all matches) and case-insensitive.
+  // Example: If user searches "spy family", regex becomes /(spy|family)/gi
+  const searchRegex = rawTokens.length > 0
+    ? new RegExp(`(${rawTokens.join("|")})`, "gi")
+    : null;
 
-      return parts.map((part, i) =>
-        part.match(regex) ? (
-          <mark
-            key={i}
-            className="rounded bg-search-highlight-bg px-0.5 font-semibold text-search-highlight-text"
-          >
-            {part}
-          </mark>
-        ) : (
-          part
-        )
-      );
-    },
-    [searchQuery]
-  );
+  const highlightMatch = (text: string) => {
+    // If there is no active search, just return the plain text.
+    if (!searchRegex || !text) return text || "";
+
+    // JavaScript's String.split() behaves specially when a capturing group `(...)` is used in the regex.
+    // Instead of just removing the matched separators, it INCLUDES the matched substrings in the output array.
+    // Example: "Spy x Family".split(/(spy|family)/gi) -> ["", "Spy", " x ", "Family", ""]
+    // Because of this, the matched search terms will ALWAYS land at the odd indices (1, 3, 5...).
+    const parts = text.split(searchRegex);
+
+    return parts.map((part, i) =>
+      // If the index is odd, we know it's a matching search term, so we wrap it in a <mark> tag to highlight it.
+      // If it's even, it's just normal surrounding text, so we return it as-is.
+      i % 2 === 1 ? (
+        <mark
+          key={i}
+          className="rounded bg-search-highlight-bg font-semibold text-search-highlight-text"
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
 
   return (
     <div className="w-full rounded-xl border border-site-border bg-site-card-bg shadow-xs overflow-hidden text-sm sm:grid sm:grid-cols-3">
@@ -126,12 +101,12 @@ export function SongTable({
         >
           {/* Artist */}
           <div className="order-3 sm:order-0 mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
-            {highlightMatch(song.artist)}
+            <span>{highlightMatch(song.artist)}</span>
           </div>
 
           {/* Song Title */}
           <div className="order-2 sm:order-0 text-sm font-bold sm:font-semibold text-brand-pink sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
-            {highlightMatch(song.song)}
+            <span>{highlightMatch(song.song)}</span>
           </div>
 
           {/* Anime / Source */}

@@ -1,29 +1,138 @@
+import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
-import { useKaraoke } from "./useKaraoke";
+import type { KaraokeSong } from "./data";
+import { fetchTakaiKaraokeSongs, normalizeText } from "./data";
 import { SearchBar } from "./SearchBar";
 import { SongTable } from "./SongTable";
+import type { SortOption, SortOrder } from "./SongTable";
 
 /**
  * Main Karaoke Application Component.
- * Orchestrates search/sort state via `useKaraoke` custom hook
- * and renders interactive search controls and responsive song table.
+ * Consolidates search/sort state and renders interactive 
+ * search controls and responsive song table.
  */
 export function KaraokeApp() {
-  const {
-    allSongs,
-    filteredSongs,
-    loading,
-    error,
-    searchQuery,
-    setSearchQuery,
-    deferredSearchQuery,
-    sortOption,
-    sortOrder,
-    handleSelectSort,
-    showScrollTop,
-    scrollToTop,
-  } = useKaraoke();
+  // ==========================================
+  // 1. STATE
+  // ==========================================
 
+  // Data State
+  const [allSongs, setAllSongs] = useState<KaraokeSong[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Search & Sort State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("anime");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  // UI State
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+
+  // ==========================================
+  // 2. EFFECTS (Side effects & Data fetching)
+  // ==========================================
+
+  // Fetch song database on component mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const songs = await fetchTakaiKaraokeSongs();
+        setAllSongs(songs);
+        setError(null);
+      } catch (err: unknown) {
+        console.error(err);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(`Failed to load karaoke database: ${errorMessage}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  // Monitor window scroll position to toggle scroll-to-top button on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
+  // ==========================================
+  // 3. HANDLERS (User interactions)
+  // ==========================================
+
+  // Toggles sort direction if clicking the same field, or sets field and defaults to asc
+  const handleSelectSort = (option: SortOption) => {
+    if (sortOption === option) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortOption(option);
+      setSortOrder("asc");
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+
+  // ==========================================
+  // 4. DERIVED DATA (Filtering & Sorting)
+  // ==========================================
+
+  // Apply Search Filter
+  const tokens = searchQuery
+    .trim()
+    .split(/\s+/)
+    .map(normalizeText)
+    .filter(Boolean);
+
+  const filteredSongs = tokens.length > 0
+    ? allSongs.filter((s) => tokens.every((token) => s.normalized.includes(token)))
+    : allSongs;
+
+  // Apply Multi-Tier Sorting 
+  const sortedSongs = [...filteredSongs].sort((a, b) => {
+    // Priority chain based on active sort option: primary -> secondary -> tertiary
+    const fields: (keyof KaraokeSong)[] =
+      sortOption === "anime"
+        ? ["anime", "artist", "song"]
+        : sortOption === "artist"
+          ? ["artist", "anime", "song"]
+          : ["song", "anime", "artist"];
+
+    for (const field of fields) {
+      const valA = (a[field] as string) || "ZZZ";
+      const valB = (b[field] as string) || "ZZZ";
+
+      const cmp = valA.localeCompare(valB, undefined, {
+        sensitivity: "base",
+        numeric: true,
+      });
+
+      if (cmp !== 0) {
+        return sortOrder === "desc" ? -cmp : cmp;
+      }
+    }
+
+    return 0;
+  });
+
+
+  // ==========================================
+  // 5. MAIN RENDER
+  // ==========================================
   return (
     <div className="w-full font-sans">
       <SearchBar
@@ -32,20 +141,24 @@ export function KaraokeApp() {
         sortOption={sortOption}
         sortOrder={sortOrder}
         onSelectSort={handleSelectSort}
-        filteredCount={filteredSongs.length}
+        filteredCount={sortedSongs.length}
         totalSongs={allSongs.length}
       />
 
       <main className="w-full">
-        {loading ? (
+        {loading && (
           <div className="py-16 text-center text-site-text-muted">
             <p className="text-sm font-semibold">Loading song database...</p>
           </div>
-        ) : error ? (
+        )}
+        
+        {!loading && !!error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
             <p>{error}</p>
           </div>
-        ) : filteredSongs.length === 0 ? (
+        )}
+
+        {!loading && !error && sortedSongs.length === 0 && (
           <div className="py-16 text-center text-site-text-muted">
             <p className="text-sm font-semibold">No matching songs found</p>
             {searchQuery && (
@@ -57,13 +170,15 @@ export function KaraokeApp() {
               </button>
             )}
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && sortedSongs.length > 0 && (
           <SongTable
-            songs={filteredSongs}
+            songs={sortedSongs}
             sortOption={sortOption}
             sortOrder={sortOrder}
             onSelectSort={handleSelectSort}
-            searchQuery={deferredSearchQuery}
+            searchQuery={searchQuery}
           />
         )}
       </main>
@@ -72,11 +187,10 @@ export function KaraokeApp() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
-        className={`fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brand-pink text-white shadow-lg transition-all duration-300 hover:bg-brand-pink/90 active:scale-95 sm:hidden ${
-          showScrollTop
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+        className={`fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brand-pink text-white shadow-lg transition-all duration-300 hover:bg-brand-pink/90 active:scale-95 sm:hidden ${showScrollTop
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
       >
         <ChevronUp className="h-6 w-6 stroke-[2.5]" />
       </button>

@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import type { SortOption, SortOrder } from "./types";
+import type { SortOption, SortOrder } from "./SongTable";
 
 export interface SearchBarProps {
   searchQuery: string;
@@ -11,10 +11,6 @@ export interface SearchBarProps {
   totalSongs: number;
 }
 
-/**
- * Search controls component containing the standalone search input, clear button,
- * total songs count summary, and mobile sort selection buttons.
- */
 export function SearchBar({
   searchQuery,
   onSearchChange,
@@ -26,7 +22,6 @@ export function SearchBar({
 }: SearchBarProps) {
   return (
     <div className="mb-4 flex flex-col">
-      {/* Standalone Search Input Field (outside card) */}
       <div className="relative w-full">
         <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-site-text-muted" />
         <input
@@ -49,26 +44,21 @@ export function SearchBar({
         )}
       </div>
 
-      {/* Info & Mobile Sort Controls - Always Below Search Bar */}
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-site-text-muted">
         <span>
           Showing <strong>{filteredCount}</strong> of <strong>{totalSongs}</strong> songs
         </span>
 
-        {/* Sort Option Selector (visible ONLY on mobile < 640px) */}
         <div className="flex items-center gap-1.5 sm:hidden">
-          <span className="font-medium text-site-text-muted">
-            Sort by:
-          </span>
+          <span className="font-medium text-site-text-muted">Sort by:</span>
           {(["anime", "song", "artist"] as SortOption[]).map((option) => (
             <button
               key={option}
               onClick={() => onSelectSort(option)}
-              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                sortOption === option
+              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sortOption === option
                   ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
                   : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
-              }`}
+                }`}
               aria-label={`Sort by ${option}`}
             >
               {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
