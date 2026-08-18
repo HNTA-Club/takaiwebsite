@@ -31,12 +31,12 @@ const year = new Date().getFullYear();
   <body>
     <header>
       <div class="fixed z-40 w-full md:top-4">
-        <div class="mx-auto bg-white p-5 shadow md:max-w-[86rem] md:rounded-xl">
+        <div class="mx-auto bg-white p-5 shadow md:max-w-[86%] 2xl:max-w-[86rem] md:rounded-xl">
           <nav class="relative flex items-center justify-between">
             <span>logo</span>
             <!-- placeholder -->
             <div
-              class="flex items-center justify-evenly gap-x-10 max-lg:hidden"
+              class="flex items-center justify-evenly gap-x-10 max-md:hidden"
             >
               {
                 menuLinks.map((item) => (
@@ -48,13 +48,13 @@ const year = new Date().getFullYear();
             </div>
             <a
               href="https://discord.com"
-              class="text-[#5865F2] max-lg:hidden"
+              class="text-[#5865F2] max-md:hidden"
               aria-label="Discord"><DiscordLogo width="32" height="32" /></a
             >
             <button
               id="mobileMenuBtn"
               type="button"
-              class="lg:hidden"
+              class="md:hidden"
               aria-controls="mobileMenu"
               aria-label="Toggle menu">M</button
             >
