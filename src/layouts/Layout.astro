@@ -1,5 +1,22 @@
 ---
 import "../styles/global.css";
+import DiscordLogo from "../images/discord.svg";
+import { Menu } from "lucide-react";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "TaKAi Website" } = Astro.props;
+
+const menuLinks = [
+  ["/events", "Events"],
+  ["/join", "Join"],
+  ["/gallery", "Gallery"],
+  ["/about", "About"],
+];
+
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -10,11 +27,80 @@ import "../styles/global.css";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title}</title>
   </head>
   <body>
-    <div class="mx-auto max-w-3xl p-5">
-      <slot />
+    <header>
+      <div class="fixed z-40 w-full md:top-4 md:px-5">
+        <div class="mx-auto bg-white p-5 shadow md:max-w-344 md:rounded-xl">
+          <nav class="relative flex items-center justify-between">
+            <span>logo</span>
+            <!-- placeholder -->
+            <div
+              class="flex items-center justify-evenly gap-x-10 max-md:hidden"
+            >
+              {
+                menuLinks.map((item) => (
+                  <a href={item[0]} class="font-semibold hover:text-blue-600">
+                    {item[1]}
+                  </a>
+                ))
+              }
+            </div>
+            <a
+              href="https://discord.com"
+              class="text-[#5865F2] max-md:hidden"
+              aria-label="Discord"><DiscordLogo width="32" height="32" /></a
+            >
+            <button
+              id="mobileMenuBtn"
+              type="button"
+              class="md:hidden"
+              aria-controls="mobileMenu"
+              aria-label="Toggle menu"><Menu /></button
+            >
+            <!-- placeholder -->
+          </nav>
+          <nav id="mobileMenu" class="hidden flex-col gap-y-2 pt-2 md:hidden">
+            {
+              menuLinks.map((item) => (
+                <a
+                  href={item[0]}
+                  class="text-center font-semibold hover:text-blue-600"
+                >
+                  {item[1]}
+                </a>
+              ))
+            }
+            <a
+              href="https://discord.com"
+              class="text-[#5865F2]"
+              aria-label="Discord"
+              ><DiscordLogo width="32" height="32" class="mx-auto" /></a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+    <script is:inline>
+      const mobileMenuBtn = document.querySelector("#mobileMenuBtn");
+      const mobileMenu = document.querySelector("#mobileMenu");
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+        mobileMenu.classList.toggle("flex");
+      });
+    </script>
+    <div class="flex min-h-dvh flex-col justify-between">
+      <main class="flex-1">
+        <slot />
+      </main>
+      <footer class="flex-none bg-black p-5 text-white">
+        <div class="mx-auto md:max-w-344">
+          &copy; {year} TaKAi board. Server infrastructure kindly provided by <a
+            href="https://modeemi.fi/">Modeemi</a
+          >.
+        </div>
+      </footer>
     </div>
   </body>
 </html>
