@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import DiscordLogo from "../images/discord.svg";
+import { Menu } from "lucide-react";
 
 interface Props {
   title?: string;
@@ -56,7 +57,7 @@ const year = new Date().getFullYear();
               type="button"
               class="md:hidden"
               aria-controls="mobileMenu"
-              aria-label="Toggle menu">M</button
+              aria-label="Toggle menu"><Menu /></button
             >
             <!-- placeholder -->
           </nav>
