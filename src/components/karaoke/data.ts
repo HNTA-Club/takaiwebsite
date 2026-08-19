@@ -15,6 +15,11 @@ export interface KaraokeSong {
 export const TAKAI_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
 
+// Hoisted regular expressions to avoid object allocations in hot loops (js-hoist-regexp)
+const RE_DIACRITICS = /[\u0300-\u036f]/g;
+const RE_PUNCTUATION = /[?!:.\-—_,'"()\[\]]/g;
+const RE_WHITESPACE = /\s+/g;
+
 /**
  * Normalizes input text for fuzzy searching.
  * Converts to lowercase, strips accents/diacritics (e.g. 'é' -> 'e'), replaces punctuation with spaces, and normalizes whitespace.
@@ -23,9 +28,9 @@ export function normalizeText(str: string): string {
   return (str || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[?!:.\-—_,'"()\[\]]/g, " ")
-    .replace(/\s+/g, " ")
+    .replace(RE_DIACRITICS, "")
+    .replace(RE_PUNCTUATION, " ")
+    .replace(RE_WHITESPACE, " ")
     .trim();
 }
 
@@ -48,14 +53,18 @@ function parseTSVData(tsvText: string): KaraokeSong[] {
 
     if (!artist && !song && !anime) continue;
 
-    const id = `${normalizeText(artist)}_${normalizeText(song)}_${normalizeText(anime)}_${i}`;
+    const normArtist = normalizeText(artist);
+    const normSong = normalizeText(song);
+    const normAnime = normalizeText(anime);
+
+    const id = `${normArtist}_${normSong}_${normAnime}_${i}`;
 
     songs.push({
       id,
       artist,
       song,
       anime,
-      normalized: normalizeText(`${artist} ${song} ${anime}`),
+      normalized: `${normArtist} ${normSong} ${normAnime}`,
     });
   }
 
