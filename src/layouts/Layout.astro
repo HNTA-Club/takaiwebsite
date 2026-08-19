@@ -61,10 +61,10 @@ const year = new Date().getFullYear();
             >
             <!-- placeholder -->
           </nav>
-          <nav id="mobileMenu" class="hidden flex-col gap-y-2 pt-2">
+          <nav id="mobileMenu" class="hidden md:hidden flex-col gap-y-2 pt-2">
             {
               menuLinks.map((item) => (
-                <a href={item[0]} class="font-semibold hover:text-blue-600">
+                <a href={item[0]} class="font-semibold hover:text-blue-600 text-center">
                   {item[1]}
                 </a>
               ))
@@ -72,7 +72,7 @@ const year = new Date().getFullYear();
             <a
               href="https://discord.com"
               class="text-[#5865F2]"
-              aria-label="Discord"><DiscordLogo width="32" height="32" /></a
+              aria-label="Discord"><DiscordLogo width="32" height="32" class="mx-auto" /></a
             >
           </nav>
         </div>
