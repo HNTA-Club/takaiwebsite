@@ -92,7 +92,7 @@ export function SongTable({
       {songs.map((song) => (
         <div
           key={song.id}
-          className="group sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent"
+          className="group sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent [content-visibility:auto] [contain-intrinsic-size:1px_48px]"
         >
           {/* Artist */}
           <div className="order-3 sm:order-0 mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
