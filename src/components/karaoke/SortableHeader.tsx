@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import type { SortOption, SortOrder } from "./SongTable";
+import type { SortOption, SortOrder } from "./index";
 
 export const SortableHeader = ({
   label,

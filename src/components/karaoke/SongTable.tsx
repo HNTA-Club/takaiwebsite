@@ -1,11 +1,6 @@
 import type { KaraokeSong } from "./data";
+import type { SortOption, SortOrder } from "./index";
 import { SortableHeader } from "./SortableHeader";
-
-// Field available for sorting the song list
-export type SortOption = "anime" | "song" | "artist";
-
-// Direction of list sorting
-export type SortOrder = "asc" | "desc";
 
 export function SongTable({
   songs,

@@ -4,7 +4,19 @@ import type { KaraokeSong } from "./data";
 import { fetchTakaiKaraokeSongs, normalizeText } from "./data";
 import { SearchBar } from "./SearchBar";
 import { SongTable } from "./SongTable";
-import type { SortOption, SortOrder } from "./SongTable";
+
+// Field available for sorting the song list
+export type SortOption = "anime" | "song" | "artist";
+
+// Direction of list sorting
+export type SortOrder = "asc" | "desc";
+
+// Priority chain mapping based on active sort option: primary -> secondary -> tertiary
+const SORT_FIELD_MAP: Record<SortOption, (keyof KaraokeSong)[]> = {
+  anime: ["anime", "artist", "song"],
+  artist: ["artist", "anime", "song"],
+  song: ["song", "anime", "artist"],
+};
 
 /**
  * Main Karaoke Application Component.
@@ -105,13 +117,7 @@ export function KaraokeApp() {
 
   // Apply Multi-Tier Sorting 
   const sortedSongs = [...filteredSongs].sort((a, b) => {
-    // Priority chain based on active sort option: primary -> secondary -> tertiary
-    const fields: (keyof KaraokeSong)[] =
-      sortOption === "anime"
-        ? ["anime", "artist", "song"]
-        : sortOption === "artist"
-          ? ["artist", "anime", "song"]
-          : ["song", "anime", "artist"];
+    const fields = SORT_FIELD_MAP[sortOption];
 
     for (const field of fields) {
       const valA = (a[field] as string) || "ZZZ";
@@ -198,5 +204,3 @@ export function KaraokeApp() {
     </div>
   );
 }
-
-export default KaraokeApp;

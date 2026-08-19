@@ -1,15 +1,7 @@
-import { Search, X } from "lucide-react";
-import type { SortOption, SortOrder } from "./SongTable";
+import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import type { SortOption, SortOrder } from "./index";
 
-export interface SearchBarProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  sortOption: SortOption;
-  sortOrder: SortOrder;
-  onSelectSort: (sort: SortOption) => void;
-  filteredCount: number;
-  totalSongs: number;
-}
+const SORT_OPTIONS: SortOption[] = ["anime", "song", "artist"];
 
 export function SearchBar({
   searchQuery,
@@ -19,7 +11,15 @@ export function SearchBar({
   onSelectSort,
   filteredCount,
   totalSongs,
-}: SearchBarProps) {
+}: {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  sortOption: SortOption;
+  sortOrder: SortOrder;
+  onSelectSort: (sort: SortOption) => void;
+  filteredCount: number;
+  totalSongs: number;
+}) {
   return (
     <div className="mb-4 flex flex-col">
       <div className="relative w-full">
@@ -51,18 +51,23 @@ export function SearchBar({
 
         <div className="flex items-center gap-1.5 sm:hidden">
           <span className="font-medium text-site-text-muted">Sort by:</span>
-          {(["anime", "song", "artist"] as SortOption[]).map((option) => (
+          {SORT_OPTIONS.map((option) => (
             <button
               key={option}
               onClick={() => onSelectSort(option)}
-              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sortOption === option
+              className={`inline-flex items-center gap-1 capitalize rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sortOption === option
                   ? "border-brand-pink bg-brand-pink font-semibold text-white shadow-xs"
                   : "border-site-border bg-site-card-bg text-site-text hover:bg-site-hover"
                 }`}
               aria-label={`Sort by ${option}`}
             >
-              {option === "anime" ? "Anime" : option === "song" ? "Song" : "Artist"}
-              {sortOption === option && (sortOrder === "asc" ? " ↓" : " ↑")}
+              <span>{option}</span>
+              {sortOption === option &&
+                (sortOrder === "asc" ? (
+                  <ChevronDown className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronUp className="h-3.5 w-3.5" />
+                ))}
             </button>
           ))}
         </div>

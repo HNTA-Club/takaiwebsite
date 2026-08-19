@@ -33,7 +33,7 @@ export function normalizeText(str: string): string {
  * Parses raw TSV (Tab-Separated Values) string from Google Sheets into structured KaraokeSong objects.
  * Skips empty rows and pre-computes normalized search strings for fast filtering.
  */
-export function parseTSVData(tsvText: string): KaraokeSong[] {
+function parseTSVData(tsvText: string): KaraokeSong[] {
   const lines = tsvText.replace(/\r/g, "").split("\n");
   const songs: KaraokeSong[] = [];
 
