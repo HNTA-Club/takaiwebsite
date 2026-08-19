@@ -18,6 +18,12 @@ const SORT_FIELD_MAP: Record<SortOption, (keyof KaraokeSong)[]> = {
   song: ["song", "anime", "artist"],
 };
 
+// Hoisted collator instance for fast string comparison in sorting loops (js-cache-function-results)
+const SONG_COLLATOR = new Intl.Collator(undefined, {
+  sensitivity: "base",
+  numeric: true,
+});
+
 /**
  * Main Karaoke Application Component.
  * Consolidates search/sort state and renders interactive 
@@ -115,18 +121,15 @@ export function KaraokeApp() {
     ? allSongs.filter((s) => tokens.every((token) => s.normalized.includes(token)))
     : allSongs;
 
-  // Apply Multi-Tier Sorting 
-  const sortedSongs = [...filteredSongs].sort((a, b) => {
+  // Apply Multi-Tier Sorting (js-tosorted-immutable & js-cache-function-results)
+  const sortedSongs = filteredSongs.toSorted((a, b) => {
     const fields = SORT_FIELD_MAP[sortOption];
 
     for (const field of fields) {
       const valA = (a[field] as string) || "ZZZ";
       const valB = (b[field] as string) || "ZZZ";
 
-      const cmp = valA.localeCompare(valB, undefined, {
-        sensitivity: "base",
-        numeric: true,
-      });
+      const cmp = SONG_COLLATOR.compare(valA, valB);
 
       if (cmp !== 0) {
         return sortOrder === "desc" ? -cmp : cmp;
