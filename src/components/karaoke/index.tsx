@@ -76,7 +76,8 @@ export function KaraokeApp() {
   // Monitor window scroll position to toggle scroll-to-top button on mobile
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      const isPastThreshold = window.scrollY > 300;
+      setShowScrollTop((prev) => (prev !== isPastThreshold ? isPastThreshold : prev));
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
