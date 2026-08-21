@@ -12,7 +12,7 @@ export interface KaraokeSong {
 }
 
 // Public Google Sheets published TSV URL containing the TaKAi karaoke database
-export const TAKAI_GOOGLE_SHEET_TSV_URL =
+const TAKAI_GOOGLE_SHEET_TSV_URL =
   "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vTFHxMlqkQW-aVmnz8IcB1w6glfoY0WNsu-EtIlCPBNzEK38UfJAwWJGHAmQErX9zcQdwL8XLyrr7FI/pub?output=tsv&range=B1:D";
 
 // Hoisted regular expressions to avoid object allocations in hot loops (js-hoist-regexp)
