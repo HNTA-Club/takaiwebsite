@@ -49,7 +49,7 @@ export function SearchBar({
           Showing <strong>{filteredCount}</strong> of <strong>{totalSongs}</strong> songs
         </span>
 
-        <div className="flex items-center gap-1.5 sm:hidden">
+        <div className="flex items-center gap-1.5 md:hidden">
           <span className="font-medium text-site-text-muted">Sort by:</span>
           {SORT_OPTIONS.map((option) => (
             <button

@@ -62,9 +62,9 @@ export function SongTable({
   };
 
   return (
-    <div className="w-full rounded-xl border border-site-border bg-site-card-bg shadow-xs overflow-hidden text-sm sm:grid sm:grid-cols-3">
+    <div className="w-full rounded-xl border border-site-border bg-site-card-bg shadow-xs overflow-hidden text-sm md:grid md:grid-cols-3">
       {/* Desktop Header */}
-      <div className="hidden sm:contents text-xs uppercase tracking-wider text-site-text-muted">
+      <div className="hidden md:contents text-xs uppercase tracking-wider text-site-text-muted">
         <SortableHeader
           label="Artist"
           field="artist"
@@ -92,24 +92,24 @@ export function SongTable({
       {songs.map((song) => (
         <div
           key={song.id}
-          className="group sm:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors sm:hover:bg-transparent [content-visibility:auto] [contain-intrinsic-size:1px_48px]"
+          className="group md:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors md:hover:bg-transparent [content-visibility:auto] [contain-intrinsic-size:1px_48px]"
         >
           {/* Artist */}
-          <div className="order-3 sm:order-0 mt-0.5 sm:mt-0 text-xs sm:text-sm text-site-text-muted sm:text-site-text sm:font-medium sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+          <div className="order-3 md:order-0 mt-0.5 md:mt-0 text-xs md:text-sm text-site-text-muted md:text-site-text md:font-medium md:px-4 md:py-2.5 md:flex md:items-center md:border-b md:border-site-border-subtle md:group-hover:bg-site-hover transition-colors">
             <span>{highlightMatch(song.artist)}</span>
           </div>
 
           {/* Song Title */}
-          <div className="order-2 sm:order-0 text-sm font-bold sm:font-semibold text-brand-pink sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
+          <div className="order-2 md:order-0 text-sm font-bold md:font-semibold text-brand-pink md:px-4 md:py-2.5 md:flex md:items-center md:border-b md:border-site-border-subtle md:group-hover:bg-site-hover transition-colors">
             <span>{highlightMatch(song.song)}</span>
           </div>
 
           {/* Anime / Source */}
-          <div className="order-1 sm:order-0 mb-1 sm:mb-0 sm:px-4 sm:py-2.5 sm:flex sm:items-center sm:text-site-text-muted sm:border-b sm:border-site-border-subtle sm:group-hover:bg-site-hover transition-colors">
-            <span className="sm:hidden inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
+          <div className="order-1 md:order-0 mb-1 md:mb-0 md:px-4 md:py-2.5 md:flex md:items-center md:text-site-text-muted md:border-b md:border-site-border-subtle md:group-hover:bg-site-hover transition-colors">
+            <span className="md:hidden inline-block rounded-md border border-brand-purple-border bg-brand-purple-bg px-2 py-0.5 text-[11px] font-semibold text-brand-purple-text">
               {highlightMatch(song.anime || "Original / Special")}
             </span>
-            <span className="hidden sm:inline">
+            <span className="hidden md:inline">
               {highlightMatch(song.anime || "—")}
             </span>
           </div>
