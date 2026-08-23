@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   web:
@@ -8,7 +8,7 @@ services:
     container_name: takai_app
     restart: always
     ports:
-      - "3000:3000"     # Maps port 3000 on your Debian host to port 3000 inside container
+      - "3000:3000" # Maps port 3000 on your Debian host to port 3000 inside container
     environment:
       - NODE_ENV=production
       - HOST=0.0.0.0
