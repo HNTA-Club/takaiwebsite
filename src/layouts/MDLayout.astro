@@ -11,10 +11,12 @@ const images = import.meta.glob<ImageMetadata>("/src/images/*", {
 });
 
 const cover = images[`/src/images/${frontmatter.image}`];
+
+const { alt = "page cover image" } = frontmatter;
 ---
 
 <Layout title={frontmatter.title}>
-  {cover && <Image src={cover} alt="page cover image" class="w-full" />}
+  {cover && <Image src={cover} alt={alt} class="w-full" />}
   <div class="mx-auto py-5 max-md:px-5 md:max-w-344">
     <h1 class="text-xl font-bold">{frontmatter.title}</h1>
     <slot />
