@@ -17,7 +17,7 @@ const { alt = "page cover image" } = frontmatter;
 
 <Layout title={frontmatter.title}>
   {cover && <Image src={cover} alt={alt} class="w-full" />}
-  <div class="mx-auto py-5 max-2xl:px-5 md:max-w-344">
+  <div class={`mx-auto py-5 max-2xl:px-5 md:max-w-344 ${cover ? "" : "pt-30"}`}>
     <slot />
   </div>
 </Layout>
