@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useRef, useEffect } from "react";
 import type { KaraokeSong } from "./data";
 import { escapeAndAccentPattern } from "./data";
 import type { SortOption, SortOrder } from "./index";
@@ -7,17 +7,45 @@ import { HighlightedText } from "./HighlightedText";
 
 export const SongTable = memo(function SongTable({
   songs,
+  totalFilteredCount,
   sortOption,
   sortOrder,
   onSelectSort,
   searchQuery = "",
+  hasMore = false,
+  onLoadMore,
 }: {
   songs: KaraokeSong[];
+  totalFilteredCount: number;
   sortOption: SortOption;
   sortOrder: SortOrder;
   onSelectSort: (sort: SortOption) => void;
   searchQuery?: string;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
 }) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Setup IntersectionObserver for smooth progressive loading
+  useEffect(() => {
+    if (!hasMore || !onLoadMore) return;
+
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { rootMargin: "400px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, onLoadMore]);
+
   // Precompile search regex once at the component root rather than inside render loops
   const rawTokens = searchQuery
     .trim()
@@ -59,7 +87,7 @@ export const SongTable = memo(function SongTable({
       {songs.map((song) => (
         <div
           key={song.id}
-          className="group md:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors md:hover:bg-transparent [content-visibility:auto] [contain-intrinsic-size:1px_48px]"
+          className="group md:contents flex flex-col p-3.5 border-b border-site-border-subtle last:border-b-0 hover:bg-site-hover transition-colors md:hover:bg-transparent"
         >
           {/* Artist */}
           <div className="order-3 md:order-0 mt-0.5 md:mt-0 text-xs md:text-sm text-site-text-muted md:text-site-text md:font-medium md:px-4 md:py-2.5 md:flex md:items-center md:border-b md:border-site-border-subtle md:group-hover:bg-site-hover transition-colors">
@@ -92,6 +120,24 @@ export const SongTable = memo(function SongTable({
           </div>
         </div>
       ))}
+
+      {/* Progressive Loading Sentinel */}
+      {hasMore && (
+        <div
+          ref={sentinelRef}
+          className="col-span-full flex items-center justify-center gap-2 py-4 text-xs text-site-text-muted"
+        >
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-pink border-t-transparent" />
+          <span>Loading more songs...</span>
+        </div>
+      )}
+
+      {/* End of list indicator */}
+      {!hasMore && (
+        <div className="col-span-full border-t border-site-border-subtle py-3 text-center text-xs text-site-text-muted">
+          All {totalFilteredCount} songs loaded
+        </div>
+      )}
     </div>
   );
 });

@@ -23,14 +23,19 @@ export function SearchBar({
   return (
     <div className="mb-4 flex flex-col">
       <div className="relative w-full">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-site-text-muted" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-site-text-muted" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by artist, song, or anime..."
           aria-label="Search by artist, song, or anime"
-          className="w-full rounded-xl border border-site-border bg-site-card-bg py-2.5 pl-10 pr-9 text-sm text-site-text outline-none shadow-xs transition-all focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/20"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="search"
+          inputMode="search"
+          className="w-full rounded-xl border border-site-border bg-site-card-bg py-2.5 pl-10 pr-9 text-base md:text-sm text-site-text outline-none shadow-xs transition-all focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/20"
         />
         {searchQuery && (
           <button

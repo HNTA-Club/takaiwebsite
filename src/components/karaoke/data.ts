@@ -17,7 +17,7 @@ const TAKAI_GOOGLE_SHEET_TSV_URL =
 
 // Hoisted regular expressions to avoid object allocations in hot loops (js-hoist-regexp)
 const RE_DIACRITICS = /[\u0300-\u036f]/g;
-const RE_PUNCTUATION = /[?!:.\-—_,'"()\[\]]/g;
+const RE_PUNCTUATION = /[?!:.\-—_,'"()[\]]/g;
 const RE_WHITESPACE = /\s+/g;
 
 /**

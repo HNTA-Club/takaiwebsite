@@ -24,6 +24,9 @@ const SONG_COLLATOR = new Intl.Collator(undefined, {
   numeric: true,
 });
 
+// Initial and incremental batch size for progressive list rendering (keeps DOM node count < 500)
+const BATCH_SIZE = 50;
+
 /**
  * Main Karaoke Application Component.
  * Consolidates search/sort state and renders interactive 
@@ -44,6 +47,9 @@ export function KaraokeApp() {
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const [sortOption, setSortOption] = useState<SortOption>("anime");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  // Progressive Rendering State (keeps initial render instant and memory low on mobile)
+  const [displayLimit, setDisplayLimit] = useState(BATCH_SIZE);
 
   // UI State
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -83,6 +89,11 @@ export function KaraokeApp() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Reset display batch back to BATCH_SIZE whenever search query or sorting changes
+  useEffect(() => {
+    setDisplayLimit(BATCH_SIZE);
+  }, [deferredSearchQuery, sortOption, sortOrder]);
 
 
   // ==========================================
@@ -153,6 +164,19 @@ export function KaraokeApp() {
     );
   }, [sortedAllSongs, deferredSearchQuery]);
 
+  // Slice filtered songs to the active display limit for DOM efficiency
+  const displayedSongs = useMemo(() => {
+    return sortedSongs.slice(0, displayLimit);
+  }, [sortedSongs, displayLimit]);
+
+  // Loads the next batch of songs when scrolling near the bottom of the table
+  const handleLoadMore = useCallback(() => {
+    setDisplayLimit((prev) => {
+      if (prev >= sortedSongs.length) return prev;
+      return Math.min(prev + BATCH_SIZE, sortedSongs.length);
+    });
+  }, [sortedSongs.length]);
+
 
   // ==========================================
   // 5. MAIN RENDER
@@ -175,7 +199,7 @@ export function KaraokeApp() {
             <p className="text-sm font-semibold">Loading song database...</p>
           </div>
         )}
-        
+
         {!loading && !!error && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
             <p>{error}</p>
@@ -198,11 +222,14 @@ export function KaraokeApp() {
 
         {!loading && !error && sortedSongs.length > 0 && (
           <SongTable
-            songs={sortedSongs}
+            songs={displayedSongs}
+            totalFilteredCount={sortedSongs.length}
             sortOption={sortOption}
             sortOrder={sortOrder}
             onSelectSort={handleSelectSort}
             searchQuery={deferredSearchQuery}
+            hasMore={displayLimit < sortedSongs.length}
+            onLoadMore={handleLoadMore}
           />
         )}
       </main>
