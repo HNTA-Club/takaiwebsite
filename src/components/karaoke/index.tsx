@@ -1,4 +1,4 @@
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useMemo, useCallback } from "react";
 import { ChevronUp } from "lucide-react";
 import type { KaraokeSong } from "./data";
 import { fetchTakaiKaraokeSongs, normalizeText } from "./data";
@@ -90,14 +90,17 @@ export function KaraokeApp() {
   // ==========================================
 
   // Toggles sort direction if clicking the same field, or sets field and defaults to asc
-  const handleSelectSort = (option: SortOption) => {
-    if (sortOption === option) {
-      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortOption(option);
-      setSortOrder("asc");
-    }
-  };
+  const handleSelectSort = useCallback(
+    (option: SortOption) => {
+      if (sortOption === option) {
+        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+      } else {
+        setSortOption(option);
+        setSortOrder("asc");
+      }
+    },
+    [sortOption]
+  );
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -111,34 +114,44 @@ export function KaraokeApp() {
   // 4. DERIVED DATA (Filtering & Sorting)
   // ==========================================
 
-  // Apply Search Filter
-  const tokens = deferredSearchQuery
-    .trim()
-    .split(/\s+/)
-    .map(normalizeText)
-    .filter(Boolean);
+  // Pre-sort all songs whenever allSongs, sortOption, or sortOrder changes.
+  // Pre-sorting base data avoids running Intl.Collator comparisons on every search keystroke.
+  const sortedAllSongs = useMemo(() => {
+    return allSongs.toSorted((a, b) => {
+      const fields = SORT_FIELD_MAP[sortOption];
 
-  const filteredSongs = tokens.length > 0
-    ? allSongs.filter((s) => tokens.every((token) => s.normalized.includes(token)))
-    : allSongs;
+      for (const field of fields) {
+        const valA = (a[field] as string) || "ZZZ";
+        const valB = (b[field] as string) || "ZZZ";
 
-  // Apply Multi-Tier Sorting (js-tosorted-immutable & js-cache-function-results)
-  const sortedSongs = filteredSongs.toSorted((a, b) => {
-    const fields = SORT_FIELD_MAP[sortOption];
+        const cmp = SONG_COLLATOR.compare(valA, valB);
 
-    for (const field of fields) {
-      const valA = (a[field] as string) || "ZZZ";
-      const valB = (b[field] as string) || "ZZZ";
-
-      const cmp = SONG_COLLATOR.compare(valA, valB);
-
-      if (cmp !== 0) {
-        return sortOrder === "desc" ? -cmp : cmp;
+        if (cmp !== 0) {
+          return sortOrder === "desc" ? -cmp : cmp;
+        }
       }
+
+      return 0;
+    });
+  }, [allSongs, sortOption, sortOrder]);
+
+  // Apply Search Filter on the pre-sorted array.
+  // Filtering an already-sorted array preserves the relative sort order automatically.
+  const sortedSongs = useMemo(() => {
+    const tokens = deferredSearchQuery
+      .trim()
+      .split(/\s+/)
+      .map(normalizeText)
+      .filter(Boolean);
+
+    if (tokens.length === 0) {
+      return sortedAllSongs;
     }
 
-    return 0;
-  });
+    return sortedAllSongs.filter((s) =>
+      tokens.every((token) => s.normalized.includes(token))
+    );
+  }, [sortedAllSongs, deferredSearchQuery]);
 
 
   // ==========================================

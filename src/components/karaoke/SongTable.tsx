@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { KaraokeSong } from "./data";
 import type { SortOption, SortOrder } from "./index";
 import { SortableHeader } from "./SortableHeader";
@@ -32,7 +33,7 @@ function highlightMatch(text: string, searchRegex: RegExp | null) {
   );
 }
 
-export function SongTable({
+export const SongTable = memo(function SongTable({
   songs,
   sortOption,
   sortOrder,
@@ -121,4 +122,4 @@ export function SongTable({
       ))}
     </div>
   );
-}
+});
