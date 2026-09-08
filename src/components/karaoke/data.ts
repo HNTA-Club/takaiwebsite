@@ -34,6 +34,27 @@ export function normalizeText(str: string): string {
     .trim();
 }
 
+// Character mapping for diacritics expansion in search regex
+const ACCENT_MAP: Record<string, string> = {
+  a: "[aàáâãäåā]",
+  e: "[eèéêëē]",
+  i: "[iìíîïī]",
+  o: "[oòóôõöōø]",
+  u: "[uùúûüū]",
+  c: "[cç]",
+  n: "[nñ]",
+};
+
+/**
+ * Escapes regex special characters and expands vowels into accent-insensitive character classes.
+ * E.g. "pokemon" matches "Pokémon".
+ */
+export function escapeAndAccentPattern(str: string): string {
+  return str
+    .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/[aeioucn]/gi, (m) => ACCENT_MAP[m.toLowerCase()] || m);
+}
+
 /**
  * Parses raw TSV (Tab-Separated Values) string from Google Sheets into structured KaraokeSong objects.
  * Skips empty rows and pre-computes normalized search strings for fast filtering.
