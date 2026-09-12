@@ -8,8 +8,7 @@ ENV CI=true
 ENV PNPM_CONFIG_CONFIRM_MODULES_PURGE=false
 ENV PNPM_CONFIG_ONLY_BUILT_DEPENDENCIES=esbuild
 
-RUN apt-get update && apt-get install -y ca-certificates && \
-    corepack enable && corepack prepare pnpm@latest --activate
+RUN apt-get update && apt-get install -y ca-certificates
 
 # Enable Corepack and prepare pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
