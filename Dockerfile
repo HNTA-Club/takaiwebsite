@@ -8,10 +8,9 @@ ENV CI=true
 ENV PNPM_CONFIG_CONFIRM_MODULES_PURGE=false
 ENV PNPM_CONFIG_ONLY_BUILT_DEPENDENCIES=esbuild
 
-RUN apt-get update && apt-get install -y ca-certificates
-
-# Enable Corepack and prepare pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable Corepack and prepare pnpm with CA certificates installed first
+RUN apt-get update && apt-get install -y ca-certificates && \
+    corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy manifest, lockfile, and optional workspace config
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
@@ -32,7 +31,9 @@ ENV CI=true
 ENV PNPM_CONFIG_CONFIRM_MODULES_PURGE=false
 ENV PNPM_CONFIG_ONLY_BUILT_DEPENDENCIES=esbuild
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# FIXED: Added apt-get ca-certificates here as well (Line 35 fix)
+RUN apt-get update && apt-get install -y ca-certificates && \
+    corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
