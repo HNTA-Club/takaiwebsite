@@ -5,6 +5,11 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",

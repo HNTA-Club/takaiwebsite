@@ -1,0 +1,22 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: takai_app
+    restart: always
+    networks:
+      host2node:
+        ipv4_address: 10.63.192.130
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3000
+networks:
+  host2node:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.63.192.128/30
+          gateway: 10.63.192.129
