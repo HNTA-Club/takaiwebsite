@@ -27,6 +27,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
+    "@tailwindcss/typography": "^0.5.20",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "astro-eslint-parser": "^3.1.0",
