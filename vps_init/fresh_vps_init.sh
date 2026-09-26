@@ -2,18 +2,24 @@
 DOMAINNAME=takai.rd.tuni.fi
 DEBIAN_FRONTEND=noninteractive
 
-apt update
+## Run installer for docker (also does update and upgrade under the hood)
 ./install-docker.sh
+
+## install the other needed software
 apt install nginx certbot git
+
+## stop and remove not needed software (conflicting with nginx)
 systemctl stop apache2
 apt remove apache2 -y
 
 ## Let's configure nginx from a template
 sed 's/{{DOMAINNAME}}/'$DOMAINNAME'/g' templates/nginx > /etc/nginx/sites-enabled/takaiwebsite
 
-## Now we are going to request for the certificate
+## Now we are going to request for the certificate, for than we need to stop nginx
 systemctl stop nginx
+## then do ask for certificate
 certbot certonly --standalone -d $DOMAINNAME --agree-tos -n
+## and enable back nginx
 systemctl start nginx
 
 ## Create auto-deploy user
