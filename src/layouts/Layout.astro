@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import { Image } from "astro:assets";
+import Logo from "../images/logo.webp";
 import DiscordLogo from "../images/discord.svg";
 import { Menu } from "lucide-react";
 
@@ -32,10 +34,11 @@ const year = new Date().getFullYear();
   <body>
     <header>
       <div class="fixed z-40 w-full md:top-4 md:px-5">
-        <div class="mx-auto bg-white p-5 shadow md:max-w-344 md:rounded-xl">
+        <div class="mx-auto bg-white p-3 shadow md:max-w-344 md:rounded-xl">
           <nav class="relative flex items-center justify-between">
-            <span>logo</span>
-            <!-- placeholder -->
+            <a href="/" aria-label="Home"
+              ><Image src={Logo} alt="logo" width="48" height="48" /></a
+            >
             <div
               class="flex items-center justify-evenly gap-x-10 max-md:hidden"
             >
@@ -59,7 +62,6 @@ const year = new Date().getFullYear();
               aria-controls="mobileMenu"
               aria-label="Toggle menu"><Menu /></button
             >
-            <!-- placeholder -->
           </nav>
           <nav id="mobileMenu" class="hidden flex-col gap-y-2 pt-2 md:hidden">
             {
