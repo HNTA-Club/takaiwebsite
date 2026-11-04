@@ -1,0 +1,18 @@
+on:
+  push:
+    branches:
+      - docker-deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ssh
+    steps:
+      - name: Run script on server
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.KEY }}" > ~/.ssh/key
+          chmod 600 ~/.ssh/key
+          ssh -i ~/.ssh/key -o StrictHostKeyChecking=accept-new \
+            "${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}" \
+            "/home/${{ vars.SSH_USER }}/deploy_website.sh"
