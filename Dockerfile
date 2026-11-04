@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y ca-certificates && \
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
 # Install all dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --fix-lockfile
 
 # Copy remaining source code and run build
 COPY . .
-RUN pnpm run build
+RUN pnpm run build --no-frozen-lockfile
 
 # --- STEP 2: Production runtime ---
 FROM node:24-slim AS runner
