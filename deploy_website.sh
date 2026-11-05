@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+cd /home/auto-deploy/takaiwebsite
 
 echo "=== 1. Building image in background (old container stays live) ==="
 docker compose build web
