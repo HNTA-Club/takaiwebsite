@@ -15,4 +15,4 @@ jobs:
           chmod 600 ~/.ssh/key
           ssh -i ~/.ssh/key -o StrictHostKeyChecking=accept-new \
             "${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}" \
-            "/home/${{ vars.SSH_USER }}/takaiwebsite/deploy_website.sh"
+            "/home/${{ vars.SSH_USER }}/takaiwebsite/scripts/deploy_website.sh"
