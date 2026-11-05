@@ -12,7 +12,7 @@ We assume that the on the VPS:
 - git clone the repo into the home directory - so that it is in _/home/auto-deploy/takaiwebsite_
 - test the _deploy_website.sh_ by manually running it.
   - It should build Your docker image and run it
-  - You should be able to preview the website on http://10.63.192.129:3000
+  - You should be able to preview the website on http://10.63.192.130:3000
 - prepare the _ssh_ environment in github, and add two variables - _SSH_USER_, _SSH_HOST_ and one secret, _KEY_.
 - Take a look at workflow file - _.github/workflows/deploy.yml_, You can find example in this document. It already exists in the repo, but modify it if needed.
 
