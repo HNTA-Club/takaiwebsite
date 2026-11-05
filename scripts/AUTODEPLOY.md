@@ -10,7 +10,6 @@ We assume that the on the VPS:
 ## Preparing the autodeployment
 
 - git clone the repo into the home directory - so that it is in _/home/auto-deploy/takaiwebsite_
-- copy _deploy_website.sh_ into home directory - _/home/auto-deploy_
 - test the _deploy_website.sh_ by manually running it.
   - It should build Your docker image and run it
   - You should be able to preview the website on http://10.63.192.129:3000
@@ -40,7 +39,7 @@ jobs:
           chmod 600 ~/.ssh/key
           ssh -i ~/.ssh/key -o StrictHostKeyChecking=accept-new \
             "${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}" \
-            "/home/${{ vars.SSH_USER }}/deploy_website.sh"
+            "/home/${{ vars.SSH_USER }}/scripts/deploy_website.sh"
 ```
 
 This file is already part of the repo, the description just acknowledges it's role
