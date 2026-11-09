@@ -46,8 +46,7 @@ Run from the project root.
 ```text
 /
 ├── public/                 # served as-is at the site root
-│   ├── favicon.ico
-│   └── favicon.svg
+│   └── favicon.ico
 ├── src/
 │   ├── layouts/
 │   │   └── Layout.astro    # shared page shell
