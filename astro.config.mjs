@@ -22,6 +22,10 @@ export default defineConfig({
     },
   ],
 
+  markdown: {
+    shikiConfig: { theme: "css-variables" },
+  },
+
   integrations: [react()],
 
   adapter: node({

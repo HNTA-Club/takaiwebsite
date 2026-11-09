@@ -5,10 +5,52 @@
   --font-sans: var(--font-inter);
 }
 
+/* Color scheme */
+@theme {
+  /* Primary: brand red */
+  --color-primary:        #be241b; /* buttons, links, key actions */
+  --color-primary-strong: #7c0202; /* hover/pressed */
+  --color-primary-subtle: #ffe6e2; /* tinted backgrounds, alerts */
+
+  /* Secondary: slate blue */
+  --color-secondary:        #486d8c; /* secondary buttons, secondary links, icons */
+  --color-secondary-strong: #1b3850; /* dark sections, headings */
+  --color-secondary-subtle: #e5eef6; /* tinted backgrounds, info notes */
+
+  /* Accent: gold, used sparingly */
+  --color-accent:        #e1ad5d; /* highlights, badges (use dark text on it) */
+  --color-accent-strong: #7a5200; /* gold for text on light backgrounds (5.8:1 on code bg) */
+  --color-accent-subtle: #fcebcc; /* tinted backgrounds, highlighted notices and badge fills */
+
+  /* Neutral: warm */
+  --color-bg:            #fcf8f1; /* page background */
+  --color-border:        #e7ddcd; /* dividers, table borders */
+  --color-border-strong: #8a7967; /* input borders, outlines of controls */
+  --color-code-bg:       #f2ebdf; /* code blocks and inline code */
+  --color-text-muted:    #78645a; /* secondary text */
+  --color-text:          #3e2b27; /* body text */
+}
+
+/* Syntax highlighting: Shiki's "css-variables" theme (see astro.config.mjs).
+   Every token color is at least 4.5:1 on --color-code-bg. */
+:root {
+  --astro-code-foreground: var(--color-text);
+  --astro-code-background: var(--color-code-bg);
+  --astro-code-token-comment: var(--color-text-muted);
+  --astro-code-token-punctuation: var(--color-text-muted);
+  --astro-code-token-keyword: var(--color-primary);
+  --astro-code-token-function: var(--color-secondary-strong);
+  --astro-code-token-constant: var(--color-secondary);
+  --astro-code-token-string: var(--color-accent-strong);
+  --astro-code-token-string-expression: var(--color-accent-strong);
+  --astro-code-token-parameter: var(--color-text);
+  --astro-code-token-link: var(--color-primary);
+}
+
 /* Styles for rendered markdown */
 @layer components {
   .md-content {
-    @apply text-base leading-relaxed text-gray-800;
+    @apply text-base leading-relaxed text-text;
 
     > * + * {
       @apply mt-4;
@@ -19,23 +61,23 @@
     }
 
     h1 {
-      @apply text-4xl font-bold text-gray-900;
+      @apply text-4xl font-bold text-text;
     }
 
     h2 {
-      @apply mt-10 text-3xl font-bold text-gray-900;
+      @apply mt-10 text-3xl font-bold text-text;
     }
 
     h3 {
-      @apply mt-8 text-2xl font-semibold text-gray-900;
+      @apply mt-8 text-2xl font-semibold text-text;
     }
 
     h4 {
-      @apply mt-6 text-xl font-semibold text-gray-900;
+      @apply mt-6 text-xl font-semibold text-text;
     }
 
     a {
-      @apply text-blue-600 underline underline-offset-2 hover:text-blue-800;
+      @apply text-primary underline underline-offset-2 hover:text-primary-strong;
     }
 
     ul {
@@ -53,15 +95,15 @@
     }
 
     blockquote {
-      @apply border-l-4 border-gray-300 pl-4 text-gray-600 italic;
+      @apply border-l-4 border-border pl-4 text-text-muted italic;
     }
 
     code {
-      @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm;
+      @apply rounded bg-code-bg px-1.5 py-0.5 text-sm;
     }
 
     pre {
-      @apply overflow-x-auto rounded-lg p-4;
+      @apply overflow-x-auto rounded-lg border border-border p-4;
     }
 
     pre code {
@@ -73,7 +115,7 @@
     }
 
     hr {
-      @apply my-8 border-gray-200;
+      @apply my-8 border-border;
     }
 
     table {
@@ -81,11 +123,11 @@
     }
 
     th {
-      @apply border-b-2 border-gray-300 px-3 py-2 font-semibold;
+      @apply border-b-2 border-border px-3 py-2 font-semibold;
     }
 
     td {
-      @apply border-b border-gray-200 px-3 py-2;
+      @apply border-b border-border px-3 py-2;
     }
   }
 }
