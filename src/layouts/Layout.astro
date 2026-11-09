@@ -1,15 +1,41 @@
 ---
 import "../styles/global.css";
-import { Image } from "astro:assets";
-import Logo from "../images/logo.webp";
-import DiscordLogo from "../images/discord.svg";
+import { Image, Font } from "astro:assets";
+import Logo from "../assets/logo.webp";
+import DiscordLogo from "../assets/discord.svg";
 import { Menu } from "lucide-react";
+import type { ImageMetadata } from "astro";
 
 interface Props {
   title?: string;
+  /** Filename of an image in /src/images, shown as a full-width cover. */
+  coverImage?: string;
+  coverAlt?: string;
+  /** Heading overlaid on the cover image. Only shown when there is a cover. */
+  coverTitle?: string;
 }
 
-const { title = "TaKAi Website" } = Astro.props;
+const {
+  title = "TaKAi Website",
+  coverImage,
+  coverAlt = "",
+  coverTitle,
+} = Astro.props;
+
+const images = import.meta.glob<ImageMetadata>("/src/images/*", {
+  import: "default",
+});
+
+let cover: ImageMetadata | undefined;
+if (coverImage) {
+  const loadCover = images[`/src/images/${coverImage}`];
+  if (!loadCover) {
+    throw new Error(
+      `Cover image "${coverImage}" not found in /src/images (page: ${Astro.url.pathname})`,
+    );
+  }
+  cover = await loadCover();
+}
 
 const menuLinks = [
   ["/events", "Events"],
@@ -26,60 +52,59 @@ const year = new Date().getFullYear();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <Font cssVariable="--font-inter" preload={[{ style: "normal" }]} />
   </head>
-  <body>
+  <body class="bg-bg text-text">
     <header>
       <div class="fixed z-40 w-full md:top-4 md:px-5">
-        <div class="mx-auto bg-white p-3 shadow md:max-w-344 md:rounded-xl">
+        <div class="bg-bg mx-auto p-3 shadow md:max-w-344 md:rounded-xl">
           <nav class="relative flex items-center justify-between">
-            <a href="/" aria-label="Home"
-              ><Image src={Logo} alt="logo" width="48" height="48" /></a
-            >
-            <div
-              class="flex items-center justify-evenly gap-x-10 max-md:hidden"
-            >
-              {
-                menuLinks.map((item) => (
-                  <a href={item[0]} class="font-semibold hover:text-blue-600">
-                    {item[1]}
-                  </a>
-                ))
-              }
+            <a href="/" aria-label="Home">
+              <Image src={Logo} alt="logo" width="48" height="48" />
+            </a>
+            <div class="flex items-center justify-evenly gap-x-10 max-md:hidden">
+              {menuLinks.map((item) => (
+                <a href={item[0]} class="hover:text-primary font-semibold">
+                  {item[1]}
+                </a>
+              ))}
             </div>
             <a
               href="https://discord.com"
               class="text-[#5865F2] max-md:hidden"
-              aria-label="Discord"><DiscordLogo width="32" height="32" /></a
+              aria-label="Discord"
             >
+              <DiscordLogo width="32" height="32" />
+            </a>
             <button
               id="mobileMenuBtn"
               type="button"
               class="md:hidden"
               aria-controls="mobileMenu"
-              aria-label="Toggle menu"><Menu /></button
+              aria-label="Toggle menu"
             >
+              <Menu />
+            </button>
           </nav>
           <nav id="mobileMenu" class="hidden flex-col gap-y-2 pt-2 md:hidden">
-            {
-              menuLinks.map((item) => (
-                <a
-                  href={item[0]}
-                  class="text-center font-semibold hover:text-blue-600"
-                >
-                  {item[1]}
-                </a>
-              ))
-            }
+            {menuLinks.map((item) => (
+              <a
+                href={item[0]}
+                class="hover:text-primary text-center font-semibold"
+              >
+                {item[1]}
+              </a>
+            ))}
             <a
               href="https://discord.com"
               class="text-[#5865F2]"
               aria-label="Discord"
-              ><DiscordLogo width="32" height="32" class="mx-auto" /></a
             >
+              <DiscordLogo width="32" height="32" class="mx-auto" />
+            </a>
           </nav>
         </div>
       </div>
@@ -94,13 +119,34 @@ const year = new Date().getFullYear();
     </script>
     <div class="flex min-h-dvh flex-col justify-between">
       <main class="flex-1">
+        {cover && (
+          <div class="relative">
+            <Image
+              src={cover}
+              alt={coverAlt}
+              layout="full-width"
+              priority
+              class="h-140 max-h-dvh w-full object-cover"
+            />
+            {coverTitle && (
+              <h1 class="absolute inset-0 flex items-center justify-center bg-linear-to-t from-black/65 to-black/35 px-5 pt-18 text-center text-4xl font-bold text-white md:pt-22 md:text-6xl">
+                {coverTitle}
+              </h1>
+            )}
+          </div>
+        )}
         <slot />
       </main>
-      <footer class="flex-none bg-black p-5 text-white">
+      <footer class="bg-border text-text flex-none p-5">
         <div class="mx-auto md:max-w-344">
-          &copy; {year} TaKAi board. Server infrastructure kindly provided by <a
-            href="https://modeemi.fi/">Modeemi</a
-          >.
+          &copy; {year} TaKAi board. Server infrastructure kindly provided by{" "}
+          <a
+            href="https://modeemi.fi/"
+            class="hover:text-primary-strong underline underline-offset-2"
+          >
+            Modeemi
+          </a>
+          .
         </div>
       </footer>
     </div>

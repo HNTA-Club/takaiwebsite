@@ -1,0 +1,41 @@
+---
+import Layout from "./Layout.astro";
+import type { MarkdownLayoutProps } from "astro";
+
+type Props = MarkdownLayoutProps<{
+  coverImage?: string;
+  coverAlt?: string;
+}>;
+
+const { frontmatter, headings, file } = Astro.props;
+
+const h1 = headings.find((h) => h.depth === 1);
+if (!h1) {
+  throw new Error(
+    `Markdown page is missing a top-level heading (# Title): ${file ?? Astro.url.pathname}`,
+  );
+}
+const title = h1.text;
+const hasCover = Boolean(frontmatter.coverImage);
+const coverTitle = hasCover ? title : undefined;
+
+let content = await Astro.slots.render("default");
+if (coverTitle) {
+  content = content.replace(/<h1[\s>].*?<\/h1>/s, "");
+}
+---
+
+<Layout
+  title={title}
+  coverImage={frontmatter.coverImage}
+  coverAlt={frontmatter.coverAlt}
+  coverTitle={coverTitle}
+>
+  <div
+    class:list={[
+      "md-content mx-auto max-w-3xl px-5 pb-5",
+      hasCover ? "pt-5" : "pt-30",
+    ]}
+    set:html={content}
+  />
+</Layout>

@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
@@ -10,6 +10,20 @@ import node from "@astrojs/node";
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
+  },
+
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: "Inter",
+      cssVariable: "--font-inter",
+      weights: ["100 900"],
+      fallbacks: ["sans-serif"],
+    },
+  ],
+
+  markdown: {
+    shikiConfig: { theme: "css-variables" },
   },
 
   integrations: [react()],
