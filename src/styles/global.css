@@ -1,3 +1,86 @@
 @import "tailwindcss";
 
-@plugin "@tailwindcss/typography";
+/* Styles for rendered markdown */
+@layer components {
+  .md-content {
+    @apply text-base leading-relaxed text-gray-800;
+
+    > * + * {
+      @apply mt-4;
+    }
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    h1 {
+      @apply text-4xl font-bold text-gray-900;
+    }
+
+    h2 {
+      @apply mt-10 text-3xl font-bold text-gray-900;
+    }
+
+    h3 {
+      @apply mt-8 text-2xl font-semibold text-gray-900;
+    }
+
+    h4 {
+      @apply mt-6 text-xl font-semibold text-gray-900;
+    }
+
+    a {
+      @apply text-blue-600 underline underline-offset-2 hover:text-blue-800;
+    }
+
+    ul {
+      @apply list-disc pl-6;
+    }
+
+    ol {
+      @apply list-decimal pl-6;
+    }
+
+    li + li,
+    li > ul,
+    li > ol {
+      @apply mt-1;
+    }
+
+    blockquote {
+      @apply border-l-4 border-gray-300 pl-4 text-gray-600 italic;
+    }
+
+    code {
+      @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm;
+    }
+
+    pre {
+      @apply overflow-x-auto rounded-lg p-4;
+    }
+
+    pre code {
+      @apply bg-transparent p-0;
+    }
+
+    img {
+      @apply h-auto max-w-full rounded-lg;
+    }
+
+    hr {
+      @apply my-8 border-gray-200;
+    }
+
+    table {
+      @apply w-full text-left text-sm;
+    }
+
+    th {
+      @apply border-b-2 border-gray-300 px-3 py-2 font-semibold;
+    }
+
+    td {
+      @apply border-b border-gray-200 px-3 py-2;
+    }
+  }
+}
