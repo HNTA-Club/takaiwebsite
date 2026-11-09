@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Inter is loaded through Astro's fonts API (see astro.config.mjs) */
+@theme inline {
+  --font-sans: var(--font-inter);
+}
+
 /* Styles for rendered markdown */
 @layer components {
   .md-content {

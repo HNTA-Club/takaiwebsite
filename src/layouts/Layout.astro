@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { Image } from "astro:assets";
+import { Image, Font } from "astro:assets";
 import Logo from "../images/logo.webp";
 import DiscordLogo from "../images/discord.svg";
 import { Menu } from "lucide-react";
@@ -30,6 +30,7 @@ const year = new Date().getFullYear();
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <Font cssVariable="--font-inter" preload={[{ style: "normal" }]} />
   </head>
   <body>
     <header>
