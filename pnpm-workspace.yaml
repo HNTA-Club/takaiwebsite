@@ -3,3 +3,8 @@ allowBuilds:
   sharp: true
 minimumReleaseAgeExclude:
   - astro@7.2.0
+overrides:
+  # @astrojs/astro2tsx pins @emnapi/core 1.x but pnpm auto-installs a 2.0 beta
+  # for the @emnapi/runtime peer, which crashes `astro check`.
+  # Remove this override when this is fixed
+  "@emnapi/runtime": 1.11.3

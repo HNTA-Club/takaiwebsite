@@ -16,10 +16,10 @@ jobs:
         node-version: [24.x]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.head_ref }}
-      - uses: pnpm/setup@v2
+      - uses: pnpm/setup@v3
         with:
           version: 11
           runtime: node@24
