@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="404 — Page Not Found">
+  <section class="mx-auto flex min-h-[80dvh] max-w-xl flex-col items-center justify-center px-5 pt-24 pb-12 text-center">
+    <div class="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+      <span class="text-primary text-6xl font-extrabold tracking-tight sm:text-7xl">
+        404
+      </span>
+      <span
+        class="bg-border-strong hidden h-12 w-px sm:block"
+        aria-hidden="true"
+      ></span>
+      <div class="sm:text-left">
+        <h1 class="text-text text-2xl font-bold sm:text-3xl">Page not found</h1>
+        <p class="text-text-muted mt-1 text-sm">
+          ページが見つかりません — This page doesn't exist or was moved.
+        </p>
+      </div>
+    </div>
+
+    <a
+      href="/"
+      class="bg-primary hover:bg-primary-strong mt-8 inline-flex items-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+    >
+      Back to home
+    </a>
+  </section>
+</Layout>
