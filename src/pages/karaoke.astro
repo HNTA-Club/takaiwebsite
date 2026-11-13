@@ -1,0 +1,48 @@
+---
+import { ExternalLink } from "lucide-react";
+import Layout from "../layouts/Layout.astro";
+import { KaraokeTable } from "../components/karaoke/KaraokeTable";
+import {
+  fetchKaraokeSongs,
+  type KaraokeSong,
+} from "../components/karaoke/songsData";
+
+// Render per request so edits to the sheet show up without a rebuild.
+export const prerender = false;
+
+let songs: KaraokeSong[] = [];
+let loadError = false;
+try {
+  songs = await fetchKaraokeSongs();
+} catch (error) {
+  console.error("Failed to load karaoke sheet:", error);
+  loadError = true;
+}
+---
+
+<Layout title="Karaoke">
+  <div class="px-5 pt-30 pb-3">
+    <div class="max-w-344 mx-auto space-y-4 antialiased">
+      <div>
+        <h1 class="text-2xl font-bold md:text-3xl">Karaoke Song Library</h1>
+        <a
+          href="https://docs.google.com/document/d/1hSYBtROm4BwvjohrkAhErUK8MxWyBs8X77ogujkFfQs/edit?usp=sharing"
+          target="_blank"
+          rel="noreferrer"
+          class="text-primary mt-2 inline-flex items-center gap-1 text-xs font-medium hover:underline"
+        >
+          How to make a karaoke song
+          <ExternalLink className="h-3 w-3" aria-hidden="true" />
+        </a>
+      </div>
+
+      {loadError ? (
+        <div class="rounded-lg border border-primary/30 bg-primary-subtle p-4 text-center text-sm text-primary-strong">
+          The song list couldn't be loaded right now. Please try again later.
+        </div>
+      ) : (
+        <KaraokeTable client:load songs={songs} />
+      )}
+    </div>
+  </div>
+</Layout>
