@@ -16,7 +16,7 @@ import type { Column, SortState } from "./types";
 
 const BATCH_SIZE = 25;
 
-const COLLATOR = new Intl.Collator(undefined, {
+const COLLATOR = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
