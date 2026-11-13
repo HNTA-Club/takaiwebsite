@@ -23,28 +23,12 @@
   --color-accent-subtle: #fcebcc; /* tinted backgrounds, highlighted notices and badge fills */
 
   /* Neutral: warm */
-  --color-bg: #fcf8f1; /* page background */
+  --color-bg: #ffffff; /* page background */
   --color-border: #e7ddcd; /* dividers, table borders */
   --color-border-strong: #8a7967; /* input borders, outlines of controls */
   --color-code-bg: #f2ebdf; /* code blocks and inline code */
   --color-text-muted: #78645a; /* secondary text */
   --color-text: #3e2b27; /* body text */
-}
-
-/* Syntax highlighting: Shiki's "css-variables" theme (see astro.config.mjs).
-   Every token color is at least 4.5:1 on --color-code-bg. */
-:root {
-  --astro-code-foreground: var(--color-text);
-  --astro-code-background: var(--color-code-bg);
-  --astro-code-token-comment: var(--color-text-muted);
-  --astro-code-token-punctuation: var(--color-text-muted);
-  --astro-code-token-keyword: var(--color-primary);
-  --astro-code-token-function: var(--color-secondary-strong);
-  --astro-code-token-constant: var(--color-secondary);
-  --astro-code-token-string: var(--color-accent-strong);
-  --astro-code-token-string-expression: var(--color-accent-strong);
-  --astro-code-token-parameter: var(--color-text);
-  --astro-code-token-link: var(--color-primary);
 }
 
 /* Styles for rendered markdown */
@@ -130,4 +114,19 @@
       @apply border-border border-b px-3 py-2;
     }
   }
+}
+
+/* Syntax highlighting for markdown code blocks */
+:root {
+  --astro-code-foreground: var(--color-text);
+  --astro-code-background: var(--color-code-bg);
+  --astro-code-token-comment: var(--color-text-muted);
+  --astro-code-token-punctuation: var(--color-text-muted);
+  --astro-code-token-keyword: var(--color-primary);
+  --astro-code-token-function: var(--color-secondary-strong);
+  --astro-code-token-constant: var(--color-secondary);
+  --astro-code-token-string: var(--color-accent-strong);
+  --astro-code-token-string-expression: var(--color-accent-strong);
+  --astro-code-token-parameter: var(--color-text);
+  --astro-code-token-link: var(--color-primary);
 }
