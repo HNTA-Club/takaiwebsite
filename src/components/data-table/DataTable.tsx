@@ -113,25 +113,25 @@ export function DataTable<K extends string>({
 }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState(defaultSort);
-  const [batchCount, setBatchCount] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
 
   // Memoize to avoid recalculation when batch is updated
   const sorted = useMemo(() => {
     const filtered = filterRows(rows, columns, query);
     return sortRows(filtered, columns, sort);
   }, [rows, columns, query, sort]);
-  const shown = sorted.slice(0, batchCount * BATCH_SIZE);
+  const shown = sorted.slice(0, visibleCount);
 
   // Once the current batches have rendered, add the next one.
   useEffect(() => {
     if (shown.length >= sorted.length) return;
-    const timer = setTimeout(() => setBatchCount((n) => n + 1));
+    const timer = setTimeout(() => setVisibleCount((n) => n + BATCH_SIZE));
     return () => clearTimeout(timer);
   }, [shown.length, sorted.length]);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    setBatchCount(1);
+    setVisibleCount(BATCH_SIZE);
   };
 
   const handleSort = (key: K) => {
@@ -140,7 +140,7 @@ export function DataTable<K extends string>({
         ? { key, order: prev.order === "asc" ? "desc" : "asc" }
         : { key, order: "asc" },
     );
-    setBatchCount(1);
+    setVisibleCount(BATCH_SIZE);
   };
 
   return (
