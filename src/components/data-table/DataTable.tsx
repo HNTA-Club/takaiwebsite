@@ -145,19 +145,19 @@ export function DataTable<K extends string>({
 
   return (
     <div className="w-full font-sans">
-      <div className="mb-4 flex flex-col">
+      <div className="sticky top-20 z-30 pb-2 md:top-24">
         <SearchBar
           query={query}
           onQueryChange={handleQueryChange}
           placeholder={searchPlaceholder}
         />
+      </div>
 
-        <div className="text-text-muted mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
-          <span>
-            Showing <strong>{sorted.length}</strong> {itemLabel}
-          </span>
-          <SortButtons columns={columns} sort={sort} onSort={handleSort} />
-        </div>
+      <div className="text-text-muted mt-1 mb-4 flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+        <span>
+          Showing <strong>{sorted.length}</strong> {itemLabel}
+        </span>
+        <SortButtons columns={columns} sort={sort} onSort={handleSort} />
       </div>
 
       {sorted.length === 0 ? (
