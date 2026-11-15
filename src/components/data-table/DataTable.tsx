@@ -154,8 +154,7 @@ export function DataTable<K extends string>({
 
         <div className="text-text-muted mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
           <span>
-            Showing <strong>{shown.length}</strong> of{" "}
-            <strong>{rows.length}</strong> {itemLabel}
+            Showing <strong>{sorted.length}</strong> {itemLabel}
           </span>
           <SortButtons columns={columns} sort={sort} onSort={handleSort} />
         </div>
