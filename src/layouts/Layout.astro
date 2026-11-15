@@ -57,27 +57,13 @@ const year = new Date().getFullYear();
     <title>{title}</title>
     <Font cssVariable="--font-inter" preload={[{ style: "normal" }]} />
   </head>
-  <body class="bg-bg text-text">
+  <body class="text-text">
     <header>
       <div class="fixed z-40 w-full md:top-4 md:px-5">
-        <div class="bg-bg mx-auto p-3 shadow md:max-w-344 md:rounded-xl">
-          <nav class="relative flex items-center justify-between">
+        <div class="bg-white mx-auto p-3 shadow max-w-344 md:rounded-xl">
+          <nav class="relative flex flex-wrap items-center justify-between">
             <a href="/" aria-label="Home">
               <Image src={Logo} alt="logo" width="48" height="48" />
-            </a>
-            <div class="flex items-center justify-evenly gap-x-10 max-md:hidden">
-              {menuLinks.map((item) => (
-                <a href={item[0]} class="hover:text-primary font-semibold">
-                  {item[1]}
-                </a>
-              ))}
-            </div>
-            <a
-              href="https://discord.com"
-              class="text-[#5865F2] max-md:hidden"
-              aria-label="Discord"
-            >
-              <DiscordLogo width="32" height="32" />
             </a>
             <button
               id="mobileMenuBtn"
@@ -88,23 +74,30 @@ const year = new Date().getFullYear();
             >
               <Menu />
             </button>
-          </nav>
-          <nav id="mobileMenu" class="hidden flex-col gap-y-2 pt-2 md:hidden">
-            {menuLinks.map((item) => (
-              <a
-                href={item[0]}
-                class="hover:text-primary text-center font-semibold"
-              >
-                {item[1]}
-              </a>
-            ))}
-            <a
-              href="https://discord.com"
-              class="text-[#5865F2]"
-              aria-label="Discord"
+            <div
+              id="mobileMenu"
+              class="hidden w-full flex-col gap-y-2 pt-2 md:contents"
             >
-              <DiscordLogo width="32" height="32" class="mx-auto" />
-            </a>
+              <div class="flex flex-col gap-y-2 md:flex-row md:gap-x-10">
+                {menuLinks.map((item) => (
+                  <a
+                    href={item[0]}
+                    class="hover:text-primary text-center font-semibold"
+                  >
+                    {item[1]}
+                  </a>
+                ))}
+              </div>
+              <a
+                href="https://discord.gg/uZJqHH7"
+                target="_blank"
+                rel="noreferrer"
+                class="text-[#5865F2] max-md:mx-auto"
+                aria-label="Discord"
+              >
+                <DiscordLogo width="32" height="32" />
+              </a>
+            </div>
           </nav>
         </div>
       </div>
